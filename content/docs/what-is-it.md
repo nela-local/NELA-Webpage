@@ -1,28 +1,31 @@
-# What is it?
+# Welcome
 
-NELA is a local-first desktop AI workspace for private, multimodal work on your own machine. It combines chat, document grounding, vision prompts, speech workflows, podcast generation, and mindmaps in one application.
+NELA is a **desktop AI workspace**. It is **local-first**: Private mode runs models on your computer. When you want more power, you can sign in and use optional **NELA Cloud**.
 
-Instead of depending on a cloud inference backend for normal usage, NELA runs local model pipelines through its desktop runtime. Your workspace keeps chats, ingested documents, generated audio, and mindmaps together by project.
+## What you can do
 
-Typical first run flow:
+- Chat, write, and reason with Fast / Smart / Deep quality tiers.
+- Ask about **folders** with the [File Indexer](/docs/features/file-indexer) (**Search my files**).
+- Ask about curated uploads in the [Document library](/docs/features/local-indexing) (**Search my documents**).
+- [Create files](/docs/features/artifacts) — presentations, Excel, HTML, Word — with live preview.
+- Use [modes](/docs/features/modes) for vision, audio, podcasts, and mindmaps.
+- Keep work in **workspaces** you can export as `.nela` projects.
 
-1. Create a new workspace or import a `.nela` project.
-2. Install the models needed for your tasks in Settings.
-3. Choose a mode: Chat, Vision, Audio, Podcast, or Mindmap.
-4. Start querying, generating, and iterating.
+## Private vs Cloud (in one minute)
+
+| | Private | Cloud |
+|---|---|---|
+| Where answers run | On this device | NELA Cloud over the internet |
+| Document library / File Indexer | Stay local | Still local unless you attach files to that chat |
+| Best for | Offline-capable work after models are installed | Hosted Fast / Smart / Deep without downloading huge models |
+
+Full detail: [Private vs Cloud](/docs/features/private-vs-cloud).
+
+## Suggested path
+
+1. [Get started](/docs/installation) — install and open a workspace.
+2. Turn on the [File Indexer](/docs/features/file-indexer) for a real project folder.
+3. Try [Create files](/docs/features/artifacts) when you need a deck or spreadsheet.
 
 > [!TIP]
-> Internet is mainly needed for downloading models (and optional model browsing). Core inference and RAG workflows are designed to run locally.
-
-## Architecture preview
-
-```mermaid
-flowchart LR
-	A[Workspace + Files] --> B[Mode UI]
-	B --> C[Task Router]
-	C --> D[Local Model Backend]
-	D --> E[Answer / Audio / Mindmap / Podcast]
-	A --> F[RAG Index]
-	F --> C
-```
-
+> You do not need Cloud to be productive. Many workflows stay entirely Private.

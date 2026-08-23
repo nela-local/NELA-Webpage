@@ -6,6 +6,44 @@ import styles from './DocsStyles.module.css';
 import { trackClientEvent } from '@/lib/analytics-client';
 import { ANALYTICS_EVENTS } from '@/lib/analytics-events';
 
+type NavItem = { href: string; label: string };
+type NavGroup = { label: string; items: NavItem[] };
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: 'Start',
+    items: [
+      { href: '/docs/what-is-it', label: 'Welcome' },
+      { href: '/docs/installation', label: 'Get started' },
+      { href: '/docs/features/private-vs-cloud', label: 'Private vs Cloud' },
+    ],
+  },
+  {
+    label: 'Your work',
+    items: [
+      { href: '/docs/features/file-indexer', label: 'File Indexer' },
+      { href: '/docs/features/local-indexing', label: 'Document library' },
+      { href: '/docs/features/artifacts', label: 'Create files' },
+      { href: '/docs/features/modes', label: 'Modes' },
+    ],
+  },
+  {
+    label: 'Setup',
+    items: [
+      { href: '/docs/models', label: 'Models & quality' },
+      { href: '/docs/features', label: 'Features overview' },
+      { href: '/docs/trouble-shooting', label: 'Fix problems' },
+    ],
+  },
+  {
+    label: 'More',
+    items: [
+      { href: '/docs/architecture', label: 'How it fits together' },
+      { href: '/docs/history', label: 'History' },
+    ],
+  },
+];
+
 export default function DocsSidebar() {
   const pathname = usePathname();
 
@@ -20,122 +58,39 @@ export default function DocsSidebar() {
     });
   };
 
-  const featuresOpen = isActive('/docs/features');
-
   return (
     <aside className={`hidden md:block w-64 lg:w-72 ${styles.docsSidebar}`}>
       <div className={`${styles.docsSidebarPanel} sticky top-24`}>
         <div className={styles.docsSidebarMeta}>
           <p className={styles.docsSidebarEyebrow}>NELA Docs</p>
-          <p className={styles.docsSidebarCaption}>Local-first guide for setup, models, and workflows</p>
+          <p className={styles.docsSidebarCaption}>
+            Local-first workspace, optional Cloud — practical guides
+          </p>
         </div>
 
         <nav className="bg-transparent">
-          <ul className="space-y-2 text-sm">
-          <li>
-            <Link
-              href="/docs/what-is-it"
-              onClick={() => trackDocsNav('/docs/what-is-it')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/what-is-it') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              What is it?
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/docs/history"
-              onClick={() => trackDocsNav('/docs/history')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/history') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              History
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/docs/architecture"
-              onClick={() => trackDocsNav('/docs/architecture')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/architecture') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              Architecture
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/docs/models"
-              onClick={() => trackDocsNav('/docs/models')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/models') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              Models
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/docs/installation"
-              onClick={() => trackDocsNav('/docs/installation')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/installation') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              Installation
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/docs/features"
-              onClick={() => trackDocsNav('/docs/features')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/features') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              Features
-            </Link>
-            {featuresOpen && (
-              <ul className="mt-2 ml-3 space-y-1">
-                <li>
-                  <Link
-                    href="/docs/features/local-indexing"
-                    onClick={() => trackDocsNav('/docs/features/local-indexing')}
-                    className={`${styles.docsSidebarSubLink} ${isActive('/docs/features/local-indexing') ? styles.docsSidebarSubLinkActive : ''}`}
-                  >
-                    Local Indexing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/docs/features/private-inference"
-                    onClick={() => trackDocsNav('/docs/features/private-inference')}
-                    className={`${styles.docsSidebarSubLink} ${isActive('/docs/features/private-inference') ? styles.docsSidebarSubLinkActive : ''}`}
-                  >
-                    Private Inference
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/docs/features/model-management"
-                    onClick={() => trackDocsNav('/docs/features/model-management')}
-                    className={`${styles.docsSidebarSubLink} ${isActive('/docs/features/model-management') ? styles.docsSidebarSubLinkActive : ''}`}
-                  >
-                    Model Management
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/docs/features/ui-integration"
-                    onClick={() => trackDocsNav('/docs/features/ui-integration')}
-                    className={`${styles.docsSidebarSubLink} ${isActive('/docs/features/ui-integration') ? styles.docsSidebarSubLinkActive : ''}`}
-                  >
-                    UI Integration
-                  </Link>
-                </li>
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className="mb-4">
+              <p className={styles.docsSidebarEyebrow} style={{ marginBottom: '0.45rem' }}>
+                {group.label}
+              </p>
+              <ul className="space-y-1.5 text-sm">
+                {group.items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      onClick={() => trackDocsNav(item.href)}
+                      className={`${styles.docsSidebarLink} ${
+                        isActive(item.href) ? styles.docsSidebarLinkActive : ''
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
-            )}
-          </li>
-          <li>
-            <Link
-              href="/docs/trouble-shooting"
-              onClick={() => trackDocsNav('/docs/trouble-shooting')}
-              className={`${styles.docsSidebarLink} ${isActive('/docs/trouble-shooting') ? styles.docsSidebarLinkActive : ''}`}
-            >
-              Trouble Shooting
-            </Link>
-          </li>
-          </ul>
+            </div>
+          ))}
         </nav>
       </div>
     </aside>

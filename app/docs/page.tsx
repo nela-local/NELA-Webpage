@@ -3,19 +3,94 @@ import TrackedDocLink from '@/components/TrackedDocLink';
 
 const quickStartLinks = [
   {
-    href: '/docs/what-is-it',
-    title: 'Start Here',
-    description: 'Understand how NELA works before setup.',
-  },
-  {
     href: '/docs/installation',
-    title: 'Install NELA',
-    description: 'Choose download-first or source-first setup.',
+    title: 'Install & open a workspace',
+    description: 'Download NELA, create a project, and send your first message.',
   },
   {
-    href: '/docs/features',
-    title: 'Explore Features',
-    description: 'See local indexing, inference, and model flows.',
+    href: '/docs/features/file-indexer',
+    title: 'Index your folders',
+    description: 'Turn disk folders into a smart File Indexer the assistant can search.',
+  },
+  {
+    href: '/docs/features/private-vs-cloud',
+    title: 'Private or Cloud',
+    description: 'Choose on-device models or optional NELA Cloud when you need it.',
+  },
+];
+
+const topicSections = [
+  {
+    title: 'Essentials',
+    cards: [
+      {
+        href: '/docs/what-is-it',
+        title: 'Welcome',
+        description: 'What NELA is: local-first desktop AI with optional Cloud.',
+      },
+      {
+        href: '/docs/installation',
+        title: 'Get started',
+        description: 'Install, first workspace, and a simple checklist.',
+      },
+      {
+        href: '/docs/features/private-vs-cloud',
+        title: 'Private vs Cloud',
+        description: 'When work stays on this device — and when it uses the internet.',
+      },
+    ],
+  },
+  {
+    title: 'Your files & creation',
+    cards: [
+      {
+        href: '/docs/features/file-indexer',
+        title: 'File Indexer',
+        description:
+          'State-of-the-art folder search: keywords + meaning, structured for better answers.',
+        featured: true,
+      },
+      {
+        href: '/docs/features/local-indexing',
+        title: 'Document library',
+        description: 'Add PDFs and docs, then ask questions with sources cited.',
+      },
+      {
+        href: '/docs/features/artifacts',
+        title: 'Create files',
+        description: 'Presentations, spreadsheets, HTML, and Word from chat.',
+      },
+      {
+        href: '/docs/features/modes',
+        title: 'Modes',
+        description: 'Chat, Vision, Audio, Podcast, and Mindmap — when to use each.',
+      },
+    ],
+  },
+  {
+    title: 'Setup & help',
+    cards: [
+      {
+        href: '/docs/models',
+        title: 'Models & quality',
+        description: 'Fast / Smart / Deep on device or in Cloud.',
+      },
+      {
+        href: '/docs/features',
+        title: 'Features overview',
+        description: 'Map of everything NELA can do, with links into each guide.',
+      },
+      {
+        href: '/docs/trouble-shooting',
+        title: 'Fix problems',
+        description: 'Indexing, downloads, and common “why isn’t this working?” tips.',
+      },
+      {
+        href: '/docs/architecture',
+        title: 'How it fits together',
+        description: 'A light picture of Private, Cloud, and your files — no deep dive required.',
+      },
+    ],
   },
 ];
 
@@ -26,8 +101,8 @@ export default function DocsPage() {
         <p className={styles.docsHeroBadge}>NELA Documentation</p>
         <h1 className={styles.docsHeroHeading}>Docs</h1>
         <p className={styles.docsHeroBody}>
-          Learn NELA through practical local-first workflows: setup, model strategy, RAG,
-          multimodal modes, and troubleshooting.
+          Practical guides for a local-first desktop AI workspace — with optional NELA Cloud.
+          Start with install, then unlock the File Indexer and your document library.
         </p>
 
         <div className={styles.docsHeroQuickGrid}>
@@ -45,43 +120,34 @@ export default function DocsPage() {
         </div>
       </div>
 
-      <div className="mt-10 mb-4">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">Browse By Topic</h2>
-        <p className="max-w-3xl text-sm md:text-base" style={{ color: 'var(--text-secondary)' }}>
-          Every page focuses on one part of NELA so users can onboard quickly and troubleshoot with confidence.
-        </p>
-      </div>
-
-      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <TrackedDocLink href="/docs/what-is-it" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">What is it?</h2>
-          <p className="text-sm">Understand the NELA local-first desktop workflow and core modes.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/history" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">History</h2>
-          <p className="text-sm">See how NELA evolved from a local runtime into a full workspace product.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/architecture" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">Architecture</h2>
-          <p className="text-sm">Trace UI, router, model backends, and RAG components end-to-end.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/models" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">Models</h2>
-          <p className="text-sm">Pick the right model classes for chat, vision, audio, and retrieval quality.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/installation" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">Installation</h2>
-          <p className="text-sm">Set up NELA from release builds or source, then install models correctly.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/features" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">Features</h2>
-          <p className="text-sm">Deep dives into local indexing, private inference, model ops, and UI flow.</p>
-        </TrackedDocLink>
-        <TrackedDocLink href="/docs/trouble-shooting" source="docs_landing" className={`${styles.docsCard} p-5`}>
-          <h2 className="text-xl font-semibold mb-1">Trouble Shooting</h2>
-          <p className="text-sm">Fix common indexing, model, and environment issues quickly.</p>
-        </TrackedDocLink>
-      </div>
+      {topicSections.map((section) => (
+        <div key={section.title} className="mt-10">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2">{section.title}</h2>
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {section.cards.map((card) => (
+              <TrackedDocLink
+                key={card.href}
+                href={card.href}
+                source="docs_landing"
+                className={`${styles.docsCard} p-5`}
+              >
+                {'featured' in card && card.featured ? (
+                  <p
+                    className="mb-2 text-[0.7rem] font-mono uppercase tracking-wider"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    Flagship
+                  </p>
+                ) : null}
+                <h2 className="text-xl font-semibold mb-1">{card.title}</h2>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  {card.description}
+                </p>
+              </TrackedDocLink>
+            ))}
+          </div>
+        </div>
+      ))}
     </section>
   );
 }

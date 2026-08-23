@@ -14,13 +14,13 @@ export default async function DownloadPage() {
         {/* ── Header ── */}
         <div className="text-center mb-20">
           <h1
-            className="font-space text-5xl md:text-7xl font-bold tracking-tighter mb-4 bg-clip-text text-transparent"
+            className="font-space inline-block overflow-visible px-[0.06em] pb-[0.08em] text-5xl md:text-7xl font-bold tracking-tight mb-4 bg-clip-text text-transparent"
             style={{ backgroundImage: 'linear-gradient(to bottom, var(--gradient-text-from), var(--gradient-text-to))' }}
           >
             Downloads
           </h1>
           <p className="text-lg font-light max-w-md mx-auto" style={{ color: 'var(--text-tertiary)' }}>
-            Everything you need to run NELA locally.
+            Everything you need to run NELA on your machine — with optional NELA Cloud after you sign in.
           </p>
         </div>
 

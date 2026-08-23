@@ -88,7 +88,7 @@ export default function Hero() {
         >
           <Terminal className="w-4 h-4" style={{ color: 'var(--accent)' }} />
           <span className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
-            Initializing local neural pathways...
+            Local-first · optional Cloud
           </span>
         </motion.div>
 
@@ -114,7 +114,7 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, type: 'spring', bounce: 0.4 }}
-          className="font-space text-7xl md:text-9xl font-bold tracking-tighter mb-6 bg-clip-text text-transparent"
+          className="font-space inline-block overflow-visible px-[0.06em] pb-[0.08em] text-7xl md:text-9xl font-bold tracking-tight mb-6 bg-clip-text text-transparent"
           style={{ backgroundImage: 'linear-gradient(to bottom, var(--gradient-text-from), var(--gradient-text-to))' }}
         >
           NELA
@@ -125,10 +125,19 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-xl md:text-3xl max-w-2xl mb-12 font-light"
+          className="text-xl md:text-3xl max-w-2xl mb-4 font-light"
           style={{ color: 'var(--text-secondary)' }}
         >
           Neural Engine for Local Analysis.
+        </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="text-base md:text-lg max-w-xl mb-12 font-light"
+          style={{ color: 'var(--text-tertiary)' }}
+        >
+          Your private AI workspace on desktop — run models on this device, or sign in for optional NELA Cloud.
         </motion.p>
 
         {/* Download Button */}

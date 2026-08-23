@@ -116,6 +116,11 @@
 .docsHeroQuickLink:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.docsHeroQuickLink:hover h2 {
+  color: var(--accent);
 }
 
 .docsHeroQuickLink p {
@@ -176,8 +181,21 @@
 }
 
 .docsContent a:hover {
-  text-decoration: underline;
+  text-decoration: none;
   color: var(--accent);
+  opacity: 0.88;
+}
+
+/* Card / quick-link boxes: never underline (including nested headings) */
+.docsCard,
+.docsCard:hover,
+.docsCard *,
+.docsCard:hover *,
+.docsHeroQuickLink,
+.docsHeroQuickLink:hover,
+.docsHeroQuickLink *,
+.docsHeroQuickLink:hover * {
+  text-decoration: none !important;
 }
 
 .docsContent code {

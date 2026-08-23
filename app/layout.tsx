@@ -15,7 +15,8 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mon
 
 export const metadata: Metadata = {
   title: 'NELA',
-  description: 'Neural Engine for Local Analysis',
+  description:
+    'Neural Engine for Local Analysis — a local-first desktop AI workspace with optional NELA Cloud.',
   icons: {
     icon: [
       { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },

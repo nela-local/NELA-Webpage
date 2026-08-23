@@ -2,32 +2,38 @@
 
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { TbShieldLock, TbBrain, TbWifiOff } from 'react-icons/tb';
+import { TbShieldLock, TbBrain, TbCloud } from 'react-icons/tb';
 import { useRef } from 'react';
 import { trackClientEvent } from '@/lib/analytics-client';
 import { ANALYTICS_EVENTS } from '@/lib/analytics-events';
 
 const features = [
   {
-    title: 'Absolute Privacy',
-    description: 'NELA runs entirely on your local machine. No data is sent to the cloud. Your prompts, your documents, and your knowledge base remain strictly confidential.',
+    title: 'Local-first privacy',
+    description:
+      'Private mode keeps chat and document inference on your machine. Your library is indexed locally. Switch to Cloud only when you choose — prompts and chat attachments then use NELA Cloud.',
     icon: TbShieldLock,
     color: 'var(--accent)',
     align: 'left',
+    imageKey: 'privacy',
   },
   {
-    title: 'Uncensored Intelligence',
-    description: 'Break free from corporate guardrails. Load any open-source model and explore ideas without restrictions or artificial limitations.',
+    title: 'Open models, your way',
+    description:
+      'Load open-source GGUF models on-device, or use NELA Cloud Fast / Smart / Deep when you want hosted quality tiers without downloading a large local model.',
     icon: TbBrain,
     color: 'var(--accent)',
     align: 'right',
+    imageKey: 'uncensored',
   },
   {
-    title: 'Internet Independent',
-    description: 'No internet dependency — fully offline. Models and responses run locally on your machine without ever needing internet',
-    icon: TbWifiOff,
+    title: 'Private or Cloud — you choose',
+    description:
+      'Work offline-capable in Private mode after models are installed. Sign in for optional NELA Cloud when you need internet-backed tiers, credits, and richer artifact generation.',
+    icon: TbCloud,
     color: 'var(--accent)',
     align: 'left',
+    imageKey: 'offline',
   },
 ];
 
@@ -83,7 +89,7 @@ export default function Features() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br opacity-20 transition-opacity duration-500 group-hover:opacity-40" />
 
-                {feature.title === 'Absolute Privacy' ? (
+                {feature.imageKey === 'privacy' ? (
                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
                     <Image
                       src="/data_privacy.png"
@@ -93,21 +99,21 @@ export default function Features() {
                       className="object-cover"
                     />
                   </div>
-                ) : feature.title === 'Uncensored Intelligence' ? (
+                ) : feature.imageKey === 'uncensored' ? (
                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
                     <Image
                       src="/uncensored_int.png"
-                      alt="Uncensored intelligence"
+                      alt="Open models"
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
                     />
                   </div>
-                ) : (feature.title === 'Internet Independent' || feature.title === 'Offline First' || feature.title === 'Runs Locally') ? (
+                ) : feature.imageKey === 'offline' ? (
                   <div className="relative w-full h-full rounded-[2rem] overflow-hidden">
                     <Image
                       src="/offline.png"
-                      alt="Offline"
+                      alt="Private or Cloud"
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"

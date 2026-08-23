@@ -1,27 +1,38 @@
-# Trouble Shooting
+# Fix problems
 
-Common issues and quick fixes for local NELA workflows.
+Short fixes for common hiccups.
 
-## Indexing is slow
+## File Indexer / Search my files feels empty
 
-- Start with a small folder to verify end-to-end ingestion first.
-- Use a lighter embedding model while validating your pipeline.
-- Keep enough free disk space for chunk/index growth.
-- First ingestion is the slowest; repeat queries are usually faster after index warmup.
-- If retrieval quality suddenly drops after changing embedding model family, rebuild the index from scratch.
+- Confirm the folder finished indexing (first pass can take a bit on large trees).
+- Make sure **Search my files** is enabled for that chat turn.
+- Point the indexer at the folder that actually holds the content.
+- After big file moves, reopen NELA or wait for a resync.
+
+## Document library answers are weak
+
+- Check that files show as ready in the library.
+- Ask a more specific question and name the document if you can.
+- If you changed retrieval models, rebuild the library index.
 
 ## Model download fails
 
-Most failures come from network interruptions, insufficient disk, or incompatible model choice.
+- Check network and free disk space.
+- Try a smaller model first.
+- Confirm the model shows as installed before selecting it.
 
-- Check internet/proxy access while downloading.
-- Verify free space in the models directory target.
-- Try a smaller model first to confirm your environment is healthy.
-- Confirm the model appears as installed before selecting it in a mode.
+## Cloud will not answer
 
-If running from source with custom model storage, verify your path:
+- Sign in and open Cloud settings.
+- Check plan / credits / Fast free window.
+- Confirm the top bar is on Cloud (or Auto with entitlement).
+
+## Running from source
 
 ```bash
 echo $GENHAT_MODEL_PATH
 ```
 
+Verify the path if models live outside the default folder.
+
+Still stuck? Revisit [Get started](/docs/installation) or [Private vs Cloud](/docs/features/private-vs-cloud).

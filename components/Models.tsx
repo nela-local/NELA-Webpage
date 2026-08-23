@@ -9,24 +9,27 @@ import { ANALYTICS_EVENTS } from '@/lib/analytics-events';
 const steps = [
   {
     step: '01',
-    title: 'Setup NELA & Models',
-    description: 'Download NELA and load any GGUF model from the download page. One-click setup — no configuration needed.',
+    title: 'Install NELA',
+    description:
+      'Download the desktop app and load local GGUF models — or sign in later for optional NELA Cloud Fast / Smart / Deep.',
     icon: TbDownload,
-    tags: ['Download NELA', 'Load GGUF Models', 'One-Click Setup'],
+    tags: ['Download NELA', 'Local GGUF', 'Optional Cloud'],
   },
   {
     step: '02',
-    title: 'Upload Your Data',
-    description: 'Feed in any file type — PDFs, PowerPoints, Word docs, audio files, and more. NELA processes them all locally.',
+    title: 'Add your data',
+    description:
+      'Feed in PDFs, PowerPoints, Word docs, audio, and more. The document library indexes on this device; Cloud chat attachments are disclosed when you send them.',
     icon: TbFileUpload,
     tags: ['PDFs', 'PPTs', 'Docs', 'Audio', 'Any Format'],
   },
   {
     step: '03',
-    title: 'Get Intelligent Responses',
-    description: 'Interact through rich chats, visual mindmaps, and AI-generated podcasts — all powered by your local models.',
+    title: 'Get intelligent responses',
+    description:
+      'Chat, mindmaps, podcasts, and artifacts — powered by your local models in Private mode, or NELA Cloud when you switch.',
     icon: TbMessageChatbot,
-    tags: ['Interactive Chats', 'Mindmaps', 'Podcasts'],
+    tags: ['Interactive Chats', 'Mindmaps', 'Cloud tiers'],
   },
 ];
 
@@ -49,7 +52,7 @@ export default function Models() {
             viewport={{ once: true }}
             className="font-space text-5xl md:text-7xl font-bold tracking-tighter mb-6"
           >
-            Run Models Locally
+            Local models &amp; NELA Cloud
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -59,7 +62,7 @@ export default function Models() {
             className="text-xl max-w-2xl mx-auto font-light"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Three simple steps to unlock private, offline AI intelligence on your own machine.
+            Three simple steps to a local-first workspace — with optional Cloud when you need it.
           </motion.p>
         </div>
 

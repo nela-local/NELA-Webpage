@@ -13,7 +13,7 @@ const workflows = [
     id: 'podcast_generation',
     title: 'Podcast Generation Workflow',
     summary:
-      'Turn rough notes, long research docs, or meeting transcripts into polished multi-speaker podcast episodes without sending your data to the cloud.',
+      'Turn rough notes, long research docs, or meeting transcripts into polished multi-speaker podcast episodes — indexed and synthesized in Private mode on your machine.',
     icon: Mic2,
     outcomes: ['Structured script', 'Multi-speaker audio', 'Export-ready episode'],
     steps: [
@@ -63,7 +63,7 @@ export default function UseCases() {
             className="text-lg md:text-xl max-w-3xl mx-auto font-light"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Explore two high-impact workflows teams use to move from raw files to ready outcomes, fully local and private.
+            Explore high-impact workflows — local-first by default, with optional NELA Cloud when you want hosted tiers.
           </motion.p>
         </div>
 

@@ -29,10 +29,10 @@ export default function Footer() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="font-space text-5xl md:text-8xl font-bold tracking-tighter mb-8 bg-clip-text text-transparent"
+          className="font-space inline-block overflow-visible px-[0.06em] pb-[0.08em] text-5xl md:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent"
           style={{ backgroundImage: 'linear-gradient(to bottom, var(--gradient-text-from), var(--gradient-text-to))' }}
         >
-          Ready to go local?
+          Ready for your workspace?
         </motion.h2>
         
         <motion.p
@@ -43,7 +43,7 @@ export default function Footer() {
           className="text-xl max-w-2xl mb-16 font-light"
           style={{ color: 'var(--text-secondary)' }}
         >
-          Join the resistance. Download NELA and take back control of your knowledge intelligence today.
+          Download NELA for Private on-device AI. Sign in after install when you want optional NELA Cloud.
         </motion.p>
 
         <motion.div

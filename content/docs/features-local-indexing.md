@@ -1,27 +1,29 @@
-# Local Indexing
+# Document library
 
-Local Indexing is NELA's retrieval layer. It lets the app ground responses in your own files without sending your source content to an external inference service.
+The **Document library** is where you add individual files (or folders of files) so Chat can answer with **sources**. In the app this is **Search my documents** / **Add to library**.
 
-## How it works
+## How it works (plain language)
 
-- You add files or folders from the workspace UI.
-- NELA parses files into chunks and stores them in a local workspace index.
-- Embedding models convert chunks and queries into vectors for similarity search.
-- Classifier and grader models can improve retrieval quality and ranking.
-- Retrieved chunks are passed into generation prompts for grounded responses.
+1. You add PDFs, Word, PowerPoint, text, and similar files.
+2. NELA reads them on this device and prepares them for search.
+3. When you ask a question with document search on, NELA pulls the most relevant passages and can cite them.
 
-Supported ingestion spans common docs, text, code, and selected audio formats used in transcription-assisted flows.
+This is the classic “chat with my uploads” path. For whole project trees on disk, prefer the [File Indexer](/docs/features/file-indexer).
 
-## Architecture snapshot
+## Good uses
 
-```mermaid
-flowchart LR
-	A[Files and Folders] --> B[Parser and Chunker]
-	B --> C[Embedding Model]
-	C --> D[(Local Chunk and Vector Store)]
-	Q[User Query] --> E[Query Embedding]
-	E --> D
-	D --> F[Top-K Retrieved Chunks]
-	F --> G[LLM Response with Evidence]
-```
+- A pack of research PDFs for one topic.
+- A slide deck or brief you want quoted accurately.
+- Mixed office files that are not a full code/docs repo.
 
+## Privacy
+
+Library indexing stays on your machine. In **Cloud** mode, only files you **attach to that chat** are sent for the conversation — see [Private vs Cloud](/docs/features/private-vs-cloud).
+
+## Tips
+
+- Prefer clear, complete documents over huge scans of everything.
+- If answers get worse after switching embedding models, rebuild the library index.
+- Combine with File Indexer when you need both curated packs and live folders.
+
+Next: [File Indexer](/docs/features/file-indexer) · [Create files](/docs/features/artifacts)

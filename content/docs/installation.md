@@ -1,18 +1,22 @@
-# Installation
+# Get started
 
-NELA is primarily used as a desktop app. Most users should install a release build from the Downloads page, then install models from inside Settings.
+## Install from the website (recommended)
 
-The npm flow below is for running NELA from source.
+1. Open the [Download page](/download).
+2. Pick your OS and version, then run the installer.
+3. Launch NELA and create or continue a **workspace**.
+4. (Optional) Sign in from Profile if you want **NELA Cloud**.
 
-## Download from website
+## First session checklist
 
-You can also install NELA directly from the website Download tab.
+1. Create a workspace from the startup screen.
+2. Stay on **Private**, or switch to **Cloud** after signing in.
+3. Install at least one chat model in Settings (Private), or use Cloud tiers.
+4. Try a simple Chat question.
+5. Turn on [File Indexer](/docs/features/file-indexer) (**Search my files**) for a project folder — or add a few PDFs to the [Document library](/docs/features/local-indexing).
+6. Ask for a short [presentation or spreadsheet](/docs/features/artifacts) if you want to see file creation.
 
-1. Open the [Download tab](/download).
-2. Select your operating system and preferred version.
-3. Download the installer and run it.
-
-## Install via npm
+## Run from source (developers)
 
 ```bash
 cd genhat-desktop
@@ -20,26 +24,8 @@ npm ci
 npx tauri dev
 ```
 
-Prerequisites for source runs:
+Needs Node.js 24+, Rust, and the usual Tauri system libraries on Linux. Custom model path (dev): `GENHAT_MODEL_PATH`.
 
-- Node.js 24 or newer
-- Rust stable toolchain
-- Linux desktop dependencies for Tauri (`webkit2gtk`, `gtk3`, `asound`, and related dev packages)
+## Stuck?
 
-## Install a model (example)
-
-Inside the app:
-
-1. Open **Settings** from the sidebar.
-2. Choose a model category (LLM, Vision, TTS, ASR, Embedding, Classifier, Grader).
-3. Download a compatible model.
-4. Return to the main view and select that model for your current mode.
-
-Optional for custom model locations in source/dev runs:
-
-```bash
-export GENHAT_MODEL_PATH=/absolute/path/to/models
-```
-
-Set `GENHAT_MODEL_PATH` before launching if models are stored outside the default repository `models` directory.
-
+See [Fix problems](/docs/trouble-shooting).
