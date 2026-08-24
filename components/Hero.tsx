@@ -148,6 +148,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row gap-4 items-center"
         >
           <button
+            type="button"
             onClick={handleDownload}
             disabled={loading || !asset}
             className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg overflow-hidden transition-transform hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"

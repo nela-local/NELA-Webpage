@@ -54,6 +54,7 @@
   font-size: 0.82rem;
   line-height: 1.2;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .docsMobileNavLink:hover {
@@ -488,6 +489,25 @@
   transition: color 150ms ease;
   background: transparent;
   border-left: 4px solid transparent;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.docsSidebar button.docsSidebarLink {
+  appearance: none;
+  font: inherit;
+  background: transparent;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.docsSidebar .docsSidebarLink:hover {
+  color: var(--accent);
+  background: transparent;
+  box-shadow: none;
+  transform: none;
 }
 
 .docsSidebar .docsSidebarLinkActive {
@@ -497,11 +517,12 @@
   font-weight: 700;
 }
 
-.docsSidebar .docsSidebarLink:hover {
-  color: var(--accent);
-  background: transparent;
-  box-shadow: none;
-  transform: none;
+.docsSidebar .docsSidebarLinkDanger {
+  color: #e11d48;
+}
+
+.docsSidebar .docsSidebarLinkDanger:hover {
+  color: #fb7185;
 }
 
 .docsSidebar .docsSidebarSubLink {

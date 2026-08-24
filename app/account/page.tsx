@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Crown, LogOut, Save } from 'lucide-react';
+import { Crown, Save } from 'lucide-react';
 import { apiFetch } from '@/lib/nela-api';
 import { useAuth } from '@/components/AuthProvider';
 import type { EntitlementResponse, UserProfileDto } from '@/lib/api-types';
@@ -12,7 +12,7 @@ import { friendlyErrorFromUnknown } from '@/lib/friendlyError';
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, isAuthenticated, isReady, setSession, signOut } = useAuth();
+  const { user, isAuthenticated, isReady, setSession } = useAuth();
   const [profile, setProfile] = useState<UserProfileDto | null>(user);
   const [entitlement, setEntitlement] = useState<EntitlementResponse | null>(
     null,
@@ -120,16 +120,10 @@ export default function AccountPage() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.replace('/');
-  };
-
   return (
-    <main className="min-h-screen px-4 pb-16 pt-24 sm:px-6 sm:pt-28">
-      <div className="mx-auto max-w-2xl">
+    <div>
         <h1 className="mb-2 font-space text-3xl font-bold tracking-tight sm:text-4xl">
-          Profile
+          Account
         </h1>
         <p className="mb-8" style={{ color: 'var(--text-secondary)' }}>
           Manage your NELA Cloud profile, plan, and quota.
@@ -320,40 +314,6 @@ export default function AccountPage() {
             ) : null}
           </div>
         ) : null}
-
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/account/link-device"
-            className="rounded-full px-5 py-2 font-medium border"
-            style={{ borderColor: 'var(--border-primary)' }}
-          >
-            Link desktop
-          </Link>
-          <Link
-            href="/account/billing"
-            className="rounded-full px-5 py-2 font-medium"
-            style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
-          >
-            Billing
-          </Link>
-          <Link
-            href="/pricing"
-            className="rounded-full px-5 py-2 font-medium border"
-            style={{ borderColor: 'var(--border-primary)' }}
-          >
-            Pricing
-          </Link>
-          <button
-            type="button"
-            onClick={() => void handleSignOut()}
-            className="inline-flex items-center gap-2 rounded-full px-5 py-2 font-medium border"
-            style={{ borderColor: 'var(--border-primary)' }}
-          >
-            <LogOut className="h-4 w-4" />
-            Sign out
-          </button>
-        </div>
-      </div>
-    </main>
+    </div>
   );
 }

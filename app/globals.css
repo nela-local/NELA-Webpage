@@ -57,6 +57,29 @@ body {
   color: var(--text-primary);
 }
 
+/* Clickable controls should always show a pointer, including <a> styled as buttons. */
+a,
+button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select,
+summary,
+label[for] {
+  cursor: pointer;
+}
+
+a[aria-disabled="true"],
+button:disabled,
+[role="button"][aria-disabled="true"],
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+}
+
 ::selection {
   background: var(--selection-bg);
   color: var(--selection-text);

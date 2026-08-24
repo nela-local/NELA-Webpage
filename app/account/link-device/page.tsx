@@ -9,7 +9,6 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/nela-api';
 import { friendlyErrorFromUnknown } from '@/lib/friendlyError';
@@ -129,15 +128,12 @@ export default function LinkDevicePage() {
 
   if (!isReady || !isAuthenticated) {
     return (
-      <main className="min-h-screen px-4 pb-16 pt-24 sm:px-6 sm:pt-28">
-        <p style={{ color: 'var(--text-secondary)' }}>Checking sign-in…</p>
-      </main>
+      <p style={{ color: 'var(--text-secondary)' }}>Checking sign-in…</p>
     );
   }
 
   return (
-    <main className="min-h-screen px-4 pb-16 pt-24 sm:px-6 sm:pt-28">
-      <div className="mx-auto max-w-lg">
+    <div>
         <h1 className="mb-2 font-space text-3xl font-bold tracking-tight sm:text-4xl">
           Link desktop app
         </h1>
@@ -157,7 +153,6 @@ export default function LinkDevicePage() {
           <div className="mb-6 flex justify-center gap-2 sm:gap-2.5">
             {digits.map((digit, index) => (
               <input
-                // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 ref={(el) => {
                   inputsRef.current[index] = el;
@@ -214,13 +209,6 @@ export default function LinkDevicePage() {
             {busy ? 'Linking…' : 'Authorize desktop'}
           </button>
         </form>
-
-        <p className="mt-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
-          <Link href="/account" style={{ color: 'var(--accent)' }}>
-            Back to profile
-          </Link>
-        </p>
-      </div>
-    </main>
+    </div>
   );
 }

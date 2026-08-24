@@ -383,9 +383,8 @@ export default function BillingClient() {
   const showMonthly = usage.monthlyGrant > 0;
 
   return (
-    <main className="min-h-screen px-4 pb-16 pt-24 sm:px-6 sm:pt-28">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <div className="mb-8">
           <div>
             <h1 className="mb-2 font-space text-3xl font-bold tracking-tight sm:text-4xl">
               Billing
@@ -394,9 +393,6 @@ export default function BillingClient() {
               Plan, usage, and top-ups in one place. Checkout is INR via Razorpay.
             </p>
           </div>
-          <Link href="/account" className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
-            ← Back to account
-          </Link>
         </div>
 
         {message ? (
@@ -701,7 +697,7 @@ export default function BillingClient() {
                   </button>
                 ) : (
                   <Link
-                    href="/pricing"
+                    href="/account/pricing"
                     className="rounded-full px-4 py-2 text-center text-sm font-semibold"
                     style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
                   >
@@ -825,7 +821,6 @@ export default function BillingClient() {
             </div>
           </section>
         ) : null}
-      </div>
 
       {/* Cancel confirmation modal */}
       {cancelModalOpen ? (
@@ -896,6 +891,6 @@ export default function BillingClient() {
           </div>
         </div>
       ) : null}
-    </main>
+    </div>
   );
 }
