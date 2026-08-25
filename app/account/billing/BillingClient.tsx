@@ -7,6 +7,7 @@ import { Crown, X } from 'lucide-react';
 import { apiFetch, getAccessToken, getApiBaseUrl } from '@/lib/nela-api';
 import { friendlyErrorFromUnknown } from '@/lib/friendlyError';
 import { evaluatePlanCheckout, type PaidPlan } from '@/lib/planCheckout';
+import { openStandardCheckout } from '@/lib/razorpayCheckout';
 import type {
   BillingPricesResponse,
   BillingTransactionsResponse,
@@ -159,6 +160,69 @@ export default function BillingClient() {
     return true;
   };
 
+  const runCheckout = async (
+    body: { type: 'subscription'; plan: PaidPlan } | { type: 'credits'; packId: CreditPackId },
+  ) => {
+    const res = await apiFetch<CheckoutResponse>(
+      '/v1/billing/razorpay/checkout',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+    );
+
+    if (res.mode === 'redirect') {
+      if (!res.checkoutUrl) throw new Error('No Razorpay checkout URL returned');
+      window.location.href = res.checkoutUrl;
+      return;
+    }
+
+    const paid = await openStandardCheckout(res);
+    if (paid.status === 'cancelled') {
+      setMessage('Payment cancelled.');
+      setBusy(false);
+      return;
+    }
+    if (paid.status === 'failed') {
+      setSuccess(false);
+      setMessage(paid.message);
+      setBusy(false);
+      return;
+    }
+
+    const confirmed = await apiFetch<ConfirmCheckoutResponse>(
+      '/v1/billing/razorpay/confirm',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          ...(body.type === 'subscription' ? { plan: body.plan } : { packId: body.packId }),
+          razorpayOrderId: paid.razorpayOrderId,
+          razorpayPaymentId: paid.razorpayPaymentId,
+          razorpaySignature: paid.razorpaySignature,
+        }),
+      },
+    );
+    setEntitlement({
+      ...((await apiFetch<EntitlementResponse>('/v1/me/entitlement').catch(
+        () => null,
+      )) ?? {
+        plan: confirmed.plan,
+        status: confirmed.status,
+        paidCloud: confirmed.paidCloud,
+        isPremium: confirmed.isPremium,
+        displayPlan: confirmed.displayPlan,
+      }),
+    } as EntitlementResponse);
+    await Promise.all([refreshSubscription(), refreshTransactions()]);
+    setSuccess(true);
+    setMessage(
+      confirmed.activated
+        ? 'Payment successful — your plan/credits are active.'
+        : 'Payment verified.',
+    );
+    setBusy(false);
+  };
+
   const checkoutPlan = async (plan: PaidPlan) => {
     if (!ensureAuth(`/account/billing?plan=${plan}&auto=1`)) return;
     const decision = evaluatePlanCheckout({
@@ -176,15 +240,7 @@ export default function BillingClient() {
     setMessage(null);
     setSuccess(false);
     try {
-      const res = await apiFetch<CheckoutResponse>(
-        '/v1/billing/razorpay/checkout',
-        {
-          method: 'POST',
-          body: JSON.stringify({ type: 'subscription', plan }),
-        },
-      );
-      if (!res.checkoutUrl) throw new Error('No Razorpay checkout URL returned');
-      window.location.href = res.checkoutUrl;
+      await runCheckout({ type: 'subscription', plan });
     } catch (err) {
       setMessage(friendlyErrorFromUnknown(err));
       setBusy(false);
@@ -197,15 +253,7 @@ export default function BillingClient() {
     setMessage(null);
     setSuccess(false);
     try {
-      const res = await apiFetch<CheckoutResponse>(
-        '/v1/billing/razorpay/checkout',
-        {
-          method: 'POST',
-          body: JSON.stringify({ type: 'credits', packId }),
-        },
-      );
-      if (!res.checkoutUrl) throw new Error('No Razorpay checkout URL returned');
-      window.location.href = res.checkoutUrl;
+      await runCheckout({ type: 'credits', packId });
     } catch (err) {
       setMessage(friendlyErrorFromUnknown(err));
       setBusy(false);

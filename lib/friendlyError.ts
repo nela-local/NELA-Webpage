@@ -33,10 +33,17 @@ export function friendlyError(raw: string | undefined | null): string {
   if (
     lower.includes("invalid credentials") ||
     lower.includes("wrong password") ||
-    lower.includes("unauthorized") ||
-    lower.includes("401")
+    lower.includes("invalid email or password")
   ) {
     return "That email or password doesn't look right. Check them and try again.";
+  }
+
+  if (lower.includes("missing bearer") || lower.includes("device session revoked")) {
+    return "Your session expired. Sign in again and try again.";
+  }
+
+  if (lower.includes("unauthorized") || lower.includes("401")) {
+    return "You're not authorized for that. Sign in again and try again.";
   }
 
   if (lower.includes("email_already") || lower.includes("already exists")) {

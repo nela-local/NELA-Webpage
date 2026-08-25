@@ -119,7 +119,15 @@ export interface BillingPricesResponse {
 }
 
 export interface CheckoutResponse {
-  checkoutUrl: string;
+  mode: 'standard' | 'redirect';
+  keyId?: string;
+  orderId?: string;
+  amount?: number;
+  currency?: string;
+  name?: string;
+  description?: string;
+  prefillEmail?: string;
+  checkoutUrl?: string;
 }
 
 export interface CancelSubscriptionResponse {
