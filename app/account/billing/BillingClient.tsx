@@ -17,6 +17,7 @@ import type {
   ConfirmCheckoutResponse,
   CreditPackId,
   EntitlementResponse,
+  RestoreSubscriptionResponse,
   SubscriptionBillingStatusResponse,
 } from '@/lib/api-types';
 
@@ -61,10 +62,11 @@ export default function BillingClient() {
   );
   const [entitlementReady, setEntitlementReady] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
-  const [cancelImmediate, setCancelImmediate] = useState(false);
+  const [restoreModalOpen, setRestoreModalOpen] = useState(false);
   const autoStarted = useRef(false);
   const confirmStarted = useRef(false);
   const cancelDialogRef = useRef<HTMLDivElement | null>(null);
+  const restoreDialogRef = useRef<HTMLDivElement | null>(null);
 
   const refreshSubscription = async () => {
     try {
@@ -138,22 +140,27 @@ export default function BillingClient() {
   }, []);
 
   useEffect(() => {
-    if (!cancelModalOpen) return;
+    if (!cancelModalOpen && !restoreModalOpen) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !busy) {
         setCancelModalOpen(false);
-        setCancelImmediate(false);
+        setRestoreModalOpen(false);
       }
     };
     window.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    cancelDialogRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    if (cancelModalOpen) {
+      cancelDialogRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    }
+    if (restoreModalOpen) {
+      restoreDialogRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    }
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [cancelModalOpen, busy]);
+  }, [cancelModalOpen, restoreModalOpen, busy]);
 
   const ensureAuth = (nextPath?: string) => {
     if (!getAccessToken()) {
@@ -274,13 +281,38 @@ export default function BillingClient() {
         '/v1/billing/razorpay/cancel',
         {
           method: 'POST',
-          body: JSON.stringify({ immediate: cancelImmediate }),
+          body: JSON.stringify({}),
         },
       );
       setSuccess(true);
       setMessage(res.message);
       setCancelModalOpen(false);
-      setCancelImmediate(false);
+      await refreshSubscription();
+      try {
+        await refreshEntitlement();
+      } catch {
+        /* ignore */
+      }
+    } catch (err) {
+      setMessage(friendlyErrorFromUnknown(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const confirmRestoreSubscription = async () => {
+    if (!ensureAuth()) return;
+    setBusy(true);
+    setMessage(null);
+    setSuccess(false);
+    try {
+      const res = await apiFetch<RestoreSubscriptionResponse>(
+        '/v1/billing/razorpay/restore',
+        { method: 'POST', body: '{}' },
+      );
+      setSuccess(true);
+      setMessage(res.message);
+      setRestoreModalOpen(false);
       await refreshSubscription();
       try {
         await refreshEntitlement();
@@ -736,26 +768,33 @@ export default function BillingClient() {
               <p className="mb-4 flex-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {isPaid
                   ? subStatus?.cancelAtPeriodEnd
-                    ? 'Cancellation is scheduled. You can end Premium immediately if you no longer need access.'
+                    ? 'Cancellation is scheduled. Restore your plan if that was a mistake.'
                     : 'Cancel at period end to stop renewal. You keep Premium until then.'
                   : 'Upgrade above or buy a credit pack to unlock Cloud Smart and Deep.'}
               </p>
               <div className="flex flex-col gap-2">
                 {isPaid ? (
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={() => {
-                      setCancelImmediate(Boolean(subStatus?.cancelAtPeriodEnd));
-                      setCancelModalOpen(true);
-                    }}
-                    className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
-                    style={{ borderColor: 'rgba(225, 29, 72, 0.45)', color: '#e11d48' }}
-                  >
-                    {subStatus?.cancelAtPeriodEnd
-                      ? 'End Premium now'
-                      : 'Cancel subscription'}
-                  </button>
+                  subStatus?.cancelAtPeriodEnd ? (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setRestoreModalOpen(true)}
+                      className="rounded-full px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                      style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
+                    >
+                      Restore subscription
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setCancelModalOpen(true)}
+                      className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                      style={{ borderColor: 'rgba(225, 29, 72, 0.45)', color: '#e11d48' }}
+                    >
+                      Cancel subscription
+                    </button>
+                  )
                 ) : (
                   <Link
                     href="/account/pricing"
@@ -893,10 +932,7 @@ export default function BillingClient() {
             aria-label="Close cancel dialog"
             disabled={busy}
             onClick={() => {
-              if (!busy) {
-                setCancelModalOpen(false);
-                setCancelImmediate(false);
-              }
+              if (!busy) setCancelModalOpen(false);
             }}
           />
           <div
@@ -916,10 +952,7 @@ export default function BillingClient() {
               style={{ color: 'var(--text-secondary)' }}
               aria-label="Close"
               disabled={busy}
-              onClick={() => {
-                setCancelModalOpen(false);
-                setCancelImmediate(false);
-              }}
+              onClick={() => setCancelModalOpen(false)}
             >
               <X className="h-4 w-4" />
             </button>
@@ -927,32 +960,20 @@ export default function BillingClient() {
               id="cancel-sub-title"
               className="pr-8 font-space text-xl font-bold tracking-tight"
             >
-              {cancelImmediate ? 'End Premium now?' : 'Cancel subscription?'}
+              Cancel subscription?
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              {cancelImmediate ? (
-                <>
-                  {planDisplayName(entitlement?.plan)} Premium access will end immediately.
-                  Remaining subscription credits for this period are not refunded. You can
-                  upgrade again anytime from Billing.
-                </>
-              ) : (
-                <>
-                  You&apos;ll keep {planDisplayName(entitlement?.plan)} Premium until the end of
-                  this billing period
-                  {accessUntilLabel ? ` (${accessUntilLabel})` : ''}. Auto-billing and renewal
-                  stop after that — no immediate lockout.
-                </>
-              )}
+              You&apos;ll keep {planDisplayName(entitlement?.plan)} Premium until the end of
+              this billing period
+              {accessUntilLabel ? ` (${accessUntilLabel})` : ''}. Auto-billing and renewal
+              stop after that — no immediate lockout. You can restore the plan anytime before
+              then if this was a mistake.
             </p>
             <div className="mt-6 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
                 disabled={busy}
-                onClick={() => {
-                  setCancelModalOpen(false);
-                  setCancelImmediate(false);
-                }}
+                onClick={() => setCancelModalOpen(false)}
                 className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ borderColor: 'var(--border-primary)' }}
               >
@@ -965,13 +986,75 @@ export default function BillingClient() {
                 className="rounded-full px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ background: '#e11d48', color: '#fff' }}
               >
-                {busy
-                  ? cancelImmediate
-                    ? 'Ending…'
-                    : 'Cancelling…'
-                  : cancelImmediate
-                    ? 'End Premium now'
-                    : 'Confirm cancel'}
+                {busy ? 'Cancelling…' : 'Confirm cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Restore subscription modal */}
+      {restoreModalOpen ? (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <button
+            type="button"
+            className="absolute inset-0"
+            style={{ background: 'var(--bg-overlay-heavy)' }}
+            aria-label="Close restore dialog"
+            disabled={busy}
+            onClick={() => {
+              if (!busy) setRestoreModalOpen(false);
+            }}
+          />
+          <div
+            ref={restoreDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="restore-sub-title"
+            className="relative w-full max-w-md rounded-2xl border p-6 shadow-xl"
+            style={{
+              background: 'var(--bg-secondary)',
+              borderColor: 'var(--border-primary)',
+            }}
+          >
+            <button
+              type="button"
+              className="absolute right-3 top-3 rounded-full p-1.5"
+              style={{ color: 'var(--text-secondary)' }}
+              aria-label="Close"
+              disabled={busy}
+              onClick={() => setRestoreModalOpen(false)}
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <h2
+              id="restore-sub-title"
+              className="pr-8 font-space text-xl font-bold tracking-tight"
+            >
+              Restore subscription?
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              This removes the scheduled cancellation. Your{' '}
+              {planDisplayName(entitlement?.plan)} plan stays active as before.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-end gap-2">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setRestoreModalOpen(false)}
+                className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                style={{ borderColor: 'var(--border-primary)' }}
+              >
+                Not now
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void confirmRestoreSubscription()}
+                className="rounded-full px-4 py-2 text-sm font-semibold disabled:opacity-60"
+                style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
+              >
+                {busy ? 'Restoring…' : 'Restore subscription'}
               </button>
             </div>
           </div>

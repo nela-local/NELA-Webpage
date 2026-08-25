@@ -138,6 +138,14 @@ export interface CancelSubscriptionResponse {
   message: string;
 }
 
+export interface RestoreSubscriptionResponse {
+  ok: boolean;
+  cancelAtPeriodEnd: false;
+  accessUntil: string | null;
+  plan: 'starter' | 'pro';
+  message: string;
+}
+
 export interface BillingTransactionDto {
   id: string;
   kind: "subscription" | "pack";
