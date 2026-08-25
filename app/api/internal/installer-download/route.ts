@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { track } from '@vercel/analytics/server';
 import { getReleasesServerSide } from '@/lib/releases';
+import { redirectToReleaseAsset } from '@/lib/github-release-download';
 import { ANALYTICS_EVENTS } from '@/lib/analytics-events';
 
 function badRequest(message: string) {
@@ -42,10 +43,10 @@ export async function GET(req: NextRequest) {
       asset_size_bytes: matchedAsset.size,
     }).catch(() => undefined);
 
-    const response = NextResponse.redirect(matchedAsset.download_url, 302);
-    response.headers.set('Cache-Control', 'no-store');
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
-    return response;
+    return redirectToReleaseAsset({
+      githubAssetId: matchedAsset.github_asset_id,
+      fallbackDownloadUrl: matchedAsset.download_url,
+    });
   } catch (error) {
     console.error('Installer download proxy error:', error);
     return NextResponse.json({ error: 'Unable to process installer download' }, { status: 500 });

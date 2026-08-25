@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { track } from '@vercel/analytics/server';
 import { ANALYTICS_EVENTS } from '@/lib/analytics-events';
 import { getReleasesServerSide, type AssetType, type ReleaseAsset } from '@/lib/releases';
+import { redirectToReleaseAsset } from '@/lib/github-release-download';
 
 type CanonicalPlatform = 'Windows' | 'Linux' | 'macOS';
 type CanonicalArch = 'amd64' | 'arm64';
@@ -127,10 +128,10 @@ export async function GET(
       asset_size_bytes: asset.size,
     }).catch(() => undefined);
 
-    const response = NextResponse.redirect(asset.download_url, 302);
-    response.headers.set('Cache-Control', 'no-store');
-    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
-    return response;
+    return redirectToReleaseAsset({
+      githubAssetId: asset.github_asset_id,
+      fallbackDownloadUrl: asset.download_url,
+    });
   } catch (error) {
     console.error('Latest installer resolution error:', error);
     return NextResponse.json({ error: 'Unable to resolve latest installer' }, { status: 500 });

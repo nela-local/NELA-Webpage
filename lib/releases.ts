@@ -5,10 +5,12 @@
 export type AssetType = "exe" | "msi" | "deb" | "AppImage" | "dmg" | "archive" | "unknown";
 
 export interface ReleaseAsset {
-  /** Original filename, e.g. "GenHat_0.1.0_x64-setup.exe" */
+  /** Original filename, e.g. "NELA_0.2.0_x64-setup.exe" */
   name: string;
-  /** Direct GitHub download URL */
+  /** Direct GitHub browser download URL (may require auth for private repos) */
   download_url: string;
+  /** GitHub release asset id — used to mint a signed download URL for private repos */
+  github_asset_id?: number;
   /** File size in bytes */
   size: number;
   /** Detected installer type */
@@ -54,7 +56,8 @@ export async function fetchReleases(): Promise<ReleasesData> {
 // instead of going out to GitHub every time.
 // ---------------------------------------------------------------------------
 
-const GITHUB_REPO = "nela-local/nela";
+const GITHUB_REPO =
+  process.env.GITHUB_RELEASES_REPO?.trim() || "nela-local/nela-private";
 const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases`;
 
 function getAssetType(name: string): AssetType {
@@ -68,21 +71,62 @@ function getAssetType(name: string): AssetType {
   return "unknown";
 }
 
+/** Infer OS from installer filename (unified multi-OS releases). */
+function platformFromAssetName(name: string): string | null {
+  const lower = name.toLowerCase();
+  if (lower.endsWith(".exe") || lower.endsWith(".msi")) return "Windows";
+  if (
+    lower.endsWith(".deb") ||
+    lower.endsWith(".rpm") ||
+    lower.endsWith(".appimage")
+  ) {
+    return "Linux";
+  }
+  if (lower.endsWith(".dmg")) return "macOS";
+  if (
+    lower.endsWith(".zip") &&
+    (lower.includes(".app") ||
+      lower.includes("darwin") ||
+      lower.includes("macos") ||
+      lower.includes("mac"))
+  ) {
+    return "macOS";
+  }
+  return null;
+}
+
 const KNOWN_PLATFORMS = ["Windows", "Linux", "macOS", "Mac"];
 
-function parseTag(tag: string): { version: string; platform: string } | null {
+function parseLegacyOsTag(
+  tag: string,
+): { version: string; platform: string } | null {
   for (const platform of KNOWN_PLATFORMS) {
     const suffix = `-${platform}`;
     if (tag.endsWith(suffix)) {
-      return { version: tag.slice(0, -suffix.length), platform: platform === "Mac" ? "macOS" : platform };
+      return {
+        version: tag.slice(0, -suffix.length),
+        platform: platform === "Mac" ? "macOS" : platform,
+      };
     }
   }
   return null;
 }
 
+function normalizeVersionTag(tag: string): string | null {
+  const t = tag.trim();
+  if (!t || t.includes("-Windows") || t.includes("-Linux") || t.includes("-macOS") || t.includes("-Mac")) {
+    return null;
+  }
+  // Accept v0.2.0 / 0.2.0 / v0.2.0-beta.1
+  if (!/^v?\d+\.\d+\.\d+/i.test(t)) return null;
+  return t.startsWith("v") || t.startsWith("V") ? t : `v${t}`;
+}
+
 function compareVersions(a: string, b: string): number {
-  const parse = (v: string) => v.replace(/^v/, "").split(".").map((n) => parseInt(n, 10) || 0);
-  const pa = parse(a), pb = parse(b);
+  const parse = (v: string) =>
+    v.replace(/^v/i, "").split(/[.+-]/).map((n) => parseInt(n, 10) || 0);
+  const pa = parse(a),
+    pb = parse(b);
   for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
     const diff = (pb[i] ?? 0) - (pa[i] ?? 0);
     if (diff !== 0) return diff;
@@ -90,17 +134,48 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
+function pushAsset(
+  platformMap: Map<string, ReleaseAsset[]>,
+  platform: string,
+  asset: {
+    id?: number;
+    name: string;
+    browser_download_url: string;
+    size: number;
+  },
+) {
+  const type = getAssetType(asset.name);
+  if (type === "unknown") return;
+  if (!platformMap.has(platform)) platformMap.set(platform, []);
+  platformMap.get(platform)!.push({
+    name: asset.name,
+    download_url: asset.browser_download_url,
+    github_asset_id: typeof asset.id === "number" ? asset.id : undefined,
+    size: asset.size,
+    type,
+  });
+}
+
 async function _fetchReleasesFromGitHub(): Promise<ReleasesData> {
   const headers: HeadersInit = {
     Accept: "application/vnd.github+json",
     "X-GitHub-Api-Version": "2022-11-28",
+    "User-Agent": "NELA-Webpage",
   };
   if (process.env.GITHUB_TOKEN) {
     headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
 
-  const res = await fetch(GITHUB_API_URL, { headers });
-  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+  const res = await fetch(GITHUB_API_URL, {
+    headers,
+    // Private repos require a token; avoid Next fetch cache serving empty 404s.
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(
+      `GitHub API error: ${res.status} (repo=${GITHUB_REPO}). For private repos set GITHUB_TOKEN.`,
+    );
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rawReleases: any[] = await res.json();
@@ -108,17 +183,28 @@ async function _fetchReleasesFromGitHub(): Promise<ReleasesData> {
   const versionMap = new Map<string, Map<string, ReleaseAsset[]>>();
 
   for (const release of rawReleases) {
-    const parsed = parseTag(release.tag_name as string);
-    if (!parsed) continue;
-    const { version, platform } = parsed;
+    const tag = String(release.tag_name ?? "");
+    const legacy = parseLegacyOsTag(tag);
+
+    if (legacy) {
+      const { version, platform } = legacy;
+      if (!versionMap.has(version)) versionMap.set(version, new Map());
+      const platformMap = versionMap.get(version)!;
+      for (const asset of release.assets ?? []) {
+        pushAsset(platformMap, platform, asset);
+      }
+      continue;
+    }
+
+    const version = normalizeVersionTag(tag);
+    if (!version) continue;
     if (!versionMap.has(version)) versionMap.set(version, new Map());
     const platformMap = versionMap.get(version)!;
-    if (!platformMap.has(platform)) platformMap.set(platform, []);
-    const assets = platformMap.get(platform)!;
+
     for (const asset of release.assets ?? []) {
-      const type = getAssetType(asset.name as string);
-      if (type === "unknown") continue;
-      assets.push({ name: asset.name, download_url: asset.browser_download_url, size: asset.size, type });
+      const platform = platformFromAssetName(String(asset.name ?? ""));
+      if (!platform) continue;
+      pushAsset(platformMap, platform, asset);
     }
   }
 
@@ -142,7 +228,7 @@ export async function getReleasesServerSide(): Promise<ReleasesData> {
   // Lazy-import unstable_cache so this module stays importable on the client
   // (the function itself should never be called client-side).
   const { unstable_cache } = await import("next/cache");
-  const cached = unstable_cache(_fetchReleasesFromGitHub, ["nela-releases"], {
+  const cached = unstable_cache(_fetchReleasesFromGitHub, ["nela-releases", GITHUB_REPO], {
     revalidate: 60, // 1 minute
     tags: ["releases"],
   });
