@@ -170,7 +170,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
         id: 'manage-cancel',
         question: 'How do I cancel a subscription?',
         answer:
-          'Open Account → Billing → Cancel subscription. That stops renewal at the end of the current period — you keep Premium until then, and no further subscription charges after that. After checkout, Razorpay returns you to Billing and activation is handled automatically; past purchases appear under Transactions.',
+          'Open Account → Billing → Cancel subscription. That stops renewal at the end of the current period — you keep Premium until then. If cancellation is already scheduled, use End Premium now to stop access immediately. After checkout, Razorpay returns you to Billing and activation is handled automatically; past purchases appear under Transactions.',
       },
       {
         id: 'packs-any-plan',

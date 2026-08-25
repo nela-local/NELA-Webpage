@@ -61,6 +61,7 @@ export default function BillingClient() {
   );
   const [entitlementReady, setEntitlementReady] = useState(false);
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
+  const [cancelImmediate, setCancelImmediate] = useState(false);
   const autoStarted = useRef(false);
   const confirmStarted = useRef(false);
   const cancelDialogRef = useRef<HTMLDivElement | null>(null);
@@ -139,7 +140,10 @@ export default function BillingClient() {
   useEffect(() => {
     if (!cancelModalOpen) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !busy) setCancelModalOpen(false);
+      if (event.key === 'Escape' && !busy) {
+        setCancelModalOpen(false);
+        setCancelImmediate(false);
+      }
     };
     window.addEventListener('keydown', onKey);
     const prevOverflow = document.body.style.overflow;
@@ -268,11 +272,15 @@ export default function BillingClient() {
     try {
       const res = await apiFetch<CancelSubscriptionResponse>(
         '/v1/billing/razorpay/cancel',
-        { method: 'POST', body: '{}' },
+        {
+          method: 'POST',
+          body: JSON.stringify({ immediate: cancelImmediate }),
+        },
       );
       setSuccess(true);
       setMessage(res.message);
       setCancelModalOpen(false);
+      setCancelImmediate(false);
       await refreshSubscription();
       try {
         await refreshEntitlement();
@@ -727,20 +735,25 @@ export default function BillingClient() {
               <h3 className="font-space text-lg font-bold">Account</h3>
               <p className="mb-4 flex-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {isPaid
-                  ? 'Cancel at period end to stop renewal. You keep Premium until then.'
+                  ? subStatus?.cancelAtPeriodEnd
+                    ? 'Cancellation is scheduled. You can end Premium immediately if you no longer need access.'
+                    : 'Cancel at period end to stop renewal. You keep Premium until then.'
                   : 'Upgrade above or buy a credit pack to unlock Cloud Smart and Deep.'}
               </p>
               <div className="flex flex-col gap-2">
                 {isPaid ? (
                   <button
                     type="button"
-                    disabled={busy || Boolean(subStatus?.cancelAtPeriodEnd)}
-                    onClick={() => setCancelModalOpen(true)}
+                    disabled={busy}
+                    onClick={() => {
+                      setCancelImmediate(Boolean(subStatus?.cancelAtPeriodEnd));
+                      setCancelModalOpen(true);
+                    }}
                     className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
                     style={{ borderColor: 'rgba(225, 29, 72, 0.45)', color: '#e11d48' }}
                   >
                     {subStatus?.cancelAtPeriodEnd
-                      ? 'Cancellation scheduled'
+                      ? 'End Premium now'
                       : 'Cancel subscription'}
                   </button>
                 ) : (
@@ -880,7 +893,10 @@ export default function BillingClient() {
             aria-label="Close cancel dialog"
             disabled={busy}
             onClick={() => {
-              if (!busy) setCancelModalOpen(false);
+              if (!busy) {
+                setCancelModalOpen(false);
+                setCancelImmediate(false);
+              }
             }}
           />
           <div
@@ -900,7 +916,10 @@ export default function BillingClient() {
               style={{ color: 'var(--text-secondary)' }}
               aria-label="Close"
               disabled={busy}
-              onClick={() => setCancelModalOpen(false)}
+              onClick={() => {
+                setCancelModalOpen(false);
+                setCancelImmediate(false);
+              }}
             >
               <X className="h-4 w-4" />
             </button>
@@ -908,19 +927,32 @@ export default function BillingClient() {
               id="cancel-sub-title"
               className="pr-8 font-space text-xl font-bold tracking-tight"
             >
-              Cancel subscription?
+              {cancelImmediate ? 'End Premium now?' : 'Cancel subscription?'}
             </h2>
             <p className="mt-3 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              You&apos;ll keep {planDisplayName(entitlement?.plan)} Premium until the end of
-              this billing period
-              {accessUntilLabel ? ` (${accessUntilLabel})` : ''}. Auto-billing and renewal
-              stop after that — no immediate lockout.
+              {cancelImmediate ? (
+                <>
+                  {planDisplayName(entitlement?.plan)} Premium access will end immediately.
+                  Remaining subscription credits for this period are not refunded. You can
+                  upgrade again anytime from Billing.
+                </>
+              ) : (
+                <>
+                  You&apos;ll keep {planDisplayName(entitlement?.plan)} Premium until the end of
+                  this billing period
+                  {accessUntilLabel ? ` (${accessUntilLabel})` : ''}. Auto-billing and renewal
+                  stop after that — no immediate lockout.
+                </>
+              )}
             </p>
             <div className="mt-6 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
                 disabled={busy}
-                onClick={() => setCancelModalOpen(false)}
+                onClick={() => {
+                  setCancelModalOpen(false);
+                  setCancelImmediate(false);
+                }}
                 className="rounded-full border px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ borderColor: 'var(--border-primary)' }}
               >
@@ -933,7 +965,13 @@ export default function BillingClient() {
                 className="rounded-full px-4 py-2 text-sm font-semibold disabled:opacity-60"
                 style={{ background: '#e11d48', color: '#fff' }}
               >
-                {busy ? 'Cancelling…' : 'Confirm cancel'}
+                {busy
+                  ? cancelImmediate
+                    ? 'Ending…'
+                    : 'Cancelling…'
+                  : cancelImmediate
+                    ? 'End Premium now'
+                    : 'Confirm cancel'}
               </button>
             </div>
           </div>
