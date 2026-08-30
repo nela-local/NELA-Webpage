@@ -22,6 +22,7 @@ const NAV_LINKS: ReadonlyArray<{
   { href: '/docs', label: 'Docs', id: 'docs' },
   { href: '/faq', label: 'FAQ', id: 'faq' },
   { href: '/pricing', label: 'Pricing', id: 'pricing' },
+  { href: '/try', label: 'Try Cloud', id: 'try' },
   { href: '/download', label: 'Download', id: 'download', cta: true },
 ];
 

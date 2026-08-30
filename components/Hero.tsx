@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Download, Terminal, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { Download, Terminal, Loader2, Cloud } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTheme } from './ThemeProvider';
@@ -147,23 +148,38 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="flex flex-col sm:flex-row gap-4 items-center"
         >
-          <button
-            type="button"
-            onClick={handleDownload}
-            disabled={loading || !asset}
-            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg overflow-hidden transition-transform hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-            style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}
-          >
-            <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" style={{ background: 'var(--accent)' }} />
-            <span className="relative z-10 flex items-center gap-2">
-              {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                <Download className="w-5 h-5" />
-              )}
-              {loading ? 'Loading...' : `Download for ${platformLabel}`}
-            </span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={loading || !asset}
+              className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg overflow-hidden transition-transform hover:scale-105 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}
+            >
+              <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" style={{ background: 'var(--accent)' }} />
+              <span className="relative z-10 flex items-center gap-2">
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Download className="w-5 h-5" />
+                )}
+                {loading ? 'Loading...' : `Download for ${platformLabel}`}
+              </span>
+            </button>
+
+            <Link
+              href="/try"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full font-bold text-lg border transition-transform hover:scale-105 active:scale-95"
+              style={{
+                borderColor: 'var(--border-primary)',
+                color: 'var(--text-primary)',
+                background: 'var(--bg-card)',
+              }}
+            >
+              <Cloud className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+              Try Cloud in browser
+            </Link>
+          </div>
 
           <span className="font-mono text-sm" style={{ color: 'var(--text-tertiary)' }}>
             {loading

@@ -34,6 +34,8 @@ const nextConfig: NextConfig = {
     ],
   },
   output: 'standalone',
+  // Prevent Next from picking up /home/amogh/package-lock.json as the monorepo root.
+  outputFileTracingRoot: process.cwd(),
   transpilePackages: ['motion'],
   webpack: (config, {dev}) => {
     // HMR is disabled in AI Studio via DISABLE_HMR env var.
