@@ -258,6 +258,16 @@ select:disabled {
   color: inherit;
   font-size: 0.875rem;
   line-height: 1.6;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.chat-markdown p,
+.chat-markdown li,
+.chat-markdown blockquote {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .chat-markdown p {
@@ -284,10 +294,12 @@ select:disabled {
   padding: 0.1em 0.35em;
   border-radius: 0.25rem;
   background: var(--code-bg);
+  word-break: break-word;
 }
 
 .chat-markdown pre {
   overflow-x: auto;
+  max-width: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
   background: var(--code-bg);
@@ -296,11 +308,14 @@ select:disabled {
 .chat-markdown pre code {
   padding: 0;
   background: transparent;
+  word-break: normal;
 }
 
 .chat-markdown a {
   color: var(--accent);
   text-decoration: underline;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .chat-code-block pre {

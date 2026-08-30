@@ -1,3 +1,4 @@
+import { buildWebTrySystemPrompt } from "./nelaSystemPrompt";
 import { buildWebChatTools } from "./cloudTools";
 import { streamCloudRound } from "./cloudStream";
 import { mergeWebSearchResults } from "./mergeWebSearch";
@@ -20,7 +21,9 @@ const WEB_TOOL_HINT_BASE =
   "You have web_search and web_extract tools for live public-web facts. " +
   "Call web_search ONLY when you need current or external information — never automatically. " +
   "Every web_search call MUST include query and depth (snippet | full | standard | deep). " +
-  "Cite web results with inline [n] markers only (no raw URLs).";
+  "Cite sources with inline [n] markers only (e.g. \"…in 2024.[1]\"), placed after the sentence period. " +
+  "Do NOT paste raw URLs, full https links, or a Sources/bibliography list — the UI already shows web sources. " +
+  "If you must name an outlet in prose, use a short markdown link like [BBC](https://…) — never the bare URL as visible text.";
 
 const WEB_TOOL_HINT_ARTIFACTS =
   "For HTML reports or presentations, wrap output in <nela-artifact type=\"text/html\" title=\"...\">...</nela-artifact> with a complete document.";
@@ -28,28 +31,21 @@ const WEB_TOOL_HINT_ARTIFACTS =
 const WEB_TOOL_HINT_NO_ARTIFACTS =
   "Do not generate HTML artifacts, slide decks, or <nela-artifact> blocks. Answer in normal chat prose and markdown only.";
 
-function injectToolHint(
+function injectSystemPrompts(
   messages: CloudChatMessage[],
   allowArtifacts: boolean,
 ): CloudChatMessage[] {
-  const hint = allowArtifacts
+  const identity = buildWebTrySystemPrompt(allowArtifacts);
+  const toolHint = allowArtifacts
     ? `${WEB_TOOL_HINT_BASE} ${WEB_TOOL_HINT_ARTIFACTS}`
     : `${WEB_TOOL_HINT_BASE} ${WEB_TOOL_HINT_NO_ARTIFACTS}`;
-  const firstSystem = messages.findIndex((m) => m.role === "system");
-  if (firstSystem >= 0) {
-    const existing = messages[firstSystem]!.content;
-    const text =
-      typeof existing === "string" ? existing : "";
-    return [
-      ...messages.slice(0, firstSystem),
-      {
-        role: "system",
-        content: `${text}\n\n${hint}`.trim(),
-      },
-      ...messages.slice(firstSystem + 1),
-    ];
-  }
-  return [{ role: "system", content: hint }, ...messages];
+
+  const withoutSystem = messages.filter((m) => m.role !== "system");
+  return [
+    { role: "system", content: identity },
+    { role: "system", content: toolHint },
+    ...withoutSystem,
+  ];
 }
 
 async function executeToolCall(
@@ -170,7 +166,7 @@ export async function runWebToolLoop(
 ): Promise<WebToolLoopResult> {
   const tools = buildWebChatTools();
   const allowArtifacts = opts.allowArtifacts !== false;
-  let messages = injectToolHint(opts.messages, allowArtifacts);
+  let messages = injectSystemPrompts(opts.messages, allowArtifacts);
   let webSearchResult: WebSearchResult | null = null;
   let thinking = "";
   let lastCredits: number | undefined;
@@ -178,13 +174,35 @@ export async function runWebToolLoop(
   let lastGuestLimits: GuestLimits | undefined;
   let lastModel: string | undefined;
 
-  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const decision = await streamCloudRound(
+  const applyMeta = (
+    meta: {
+      creditsRemaining?: number;
+      trialCreditsRemaining?: number;
+      guestLimits?: GuestLimits;
+      model?: string;
+    },
+  ) => {
+    if (typeof meta.creditsRemaining === "number") {
+      lastCredits = meta.creditsRemaining;
+    }
+    if (typeof meta.trialCreditsRemaining === "number") {
+      lastTrial = meta.trialCreditsRemaining;
+    }
+    if (meta.guestLimits) lastGuestLimits = meta.guestLimits;
+    if (meta.model) lastModel = meta.model;
+  };
+
+  const streamOnce = async (args: {
+    withTools: boolean;
+    liveChunks: boolean;
+  }) => {
+    return streamCloudRound(
       {
         mode: opts.mode,
         messages,
-        tools,
-        tool_choice: "auto",
+        ...(args.withTools
+          ? { tools, tool_choice: "auto" as const }
+          : { tool_choice: "none" as const }),
         privacy: {
           containsFileContext: false,
           userConfirmedCloudContext: false,
@@ -194,8 +212,8 @@ export async function runWebToolLoop(
       },
       {
         signal: opts.signal,
-        onChunk: () => {
-          /* suppress intermediate tool-decision tokens */
+        onChunk: (chunk) => {
+          if (args.liveChunks) opts.onChunk(chunk);
         },
         onThinking: (t) => {
           thinking += t;
@@ -206,23 +224,67 @@ export async function runWebToolLoop(
       },
       opts.guestLimits,
     );
+  };
 
-    if (typeof decision.creditsRemaining === "number") {
-      lastCredits = decision.creditsRemaining;
-    }
-    if (typeof decision.trialCreditsRemaining === "number") {
-      lastTrial = decision.trialCreditsRemaining;
-    }
-    if (decision.guestLimits) lastGuestLimits = decision.guestLimits;
-    if (decision.model) lastModel = decision.model;
+  const EMPTY_REPLY =
+    "NELA Cloud didn't return an answer for that request. Please try again.";
 
-    const toolCalls = decision.tool_calls ?? [];
+  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
+    let decision;
+    try {
+      decision = await streamOnce({ withTools: true, liveChunks: false });
+    } catch (err) {
+      // One more attempt without tools before surfacing failure.
+      try {
+        opts.onToolStatus?.("Retrying…");
+        decision = await streamOnce({ withTools: false, liveChunks: true });
+        opts.onToolStatus?.(null);
+      } catch {
+        throw err;
+      }
+    }
+
+    applyMeta(decision);
+
+    const toolCalls = (decision.tool_calls ?? []).filter(
+      (c) => c.function.name.trim().length > 0,
+    );
+    const prose =
+      decision.content.trim() ||
+      (toolCalls.length === 0 ? thinking.trim() : "");
+
     if (!toolCalls.length) {
-      if (decision.content.trim()) {
-        opts.onChunk(decision.content);
+      if (prose) {
+        if (!decision.content.trim() && thinking.trim()) {
+          opts.onChunk(prose);
+        } else if (decision.content.trim()) {
+          opts.onChunk(decision.content);
+        }
+        return {
+          content: prose,
+          thinking,
+          webSearchResult,
+          creditsRemaining: lastCredits,
+          trialCreditsRemaining: lastTrial,
+          guestLimits: lastGuestLimits,
+          model: lastModel,
+        };
+      }
+
+      // Empty completion — retry once without tools.
+      opts.onToolStatus?.("Retrying…");
+      const retry = await streamOnce({ withTools: false, liveChunks: true });
+      opts.onToolStatus?.(null);
+      applyMeta(retry);
+      const retryProse = retry.content.trim() || thinking.trim();
+      if (!retryProse) {
+        throw new Error(EMPTY_REPLY);
+      }
+      if (!retry.content.trim() && thinking.trim()) {
+        opts.onChunk(retryProse);
       }
       return {
-        content: decision.content,
+        content: retryProse,
         thinking,
         webSearchResult,
         creditsRemaining: lastCredits,
@@ -270,55 +332,72 @@ export async function runWebToolLoop(
           role: "user",
           content:
             "Continue. If you still need web facts, call web_search with a NEW query. " +
-            "Otherwise answer in prose with inline [n] citations only.",
+            "Otherwise answer in prose with inline [n] citations only. " +
+            "Do not paste raw URLs or a Sources list. Never return an empty answer.",
         },
       ];
     }
   }
 
-  // Final prose turn without tools
   let content = "";
-  await new Promise<void>((resolve, reject) => {
-    streamCloudRound(
-      {
-        mode: opts.mode,
-        messages,
-        privacy: {
-          containsFileContext: false,
-          userConfirmedCloudContext: false,
-          contextSource: "web_try",
+  try {
+    await new Promise<void>((resolve, reject) => {
+      streamCloudRound(
+        {
+          mode: opts.mode,
+          messages,
+          tool_choice: "none",
+          privacy: {
+            containsFileContext: false,
+            userConfirmedCloudContext: false,
+            contextSource: "web_try",
+          },
+          client: { platform: "web", sessionId: opts.sessionId },
         },
-        client: { platform: "web", sessionId: opts.sessionId },
-      },
-      {
-        signal: opts.signal,
-        onChunk: (chunk) => {
-          content += chunk;
-          opts.onChunk(chunk);
+        {
+          signal: opts.signal,
+          onChunk: (chunk) => {
+            content += chunk;
+            opts.onChunk(chunk);
+          },
+          onThinking: (t) => {
+            thinking += t;
+            opts.onThinking(t);
+          },
+          onFinish: (meta) => {
+            applyMeta(meta ?? {});
+            resolve();
+          },
+          onError: reject,
         },
-        onThinking: (t) => {
-          thinking += t;
-          opts.onThinking(t);
-        },
-        onFinish: (meta) => {
-          if (typeof meta?.creditsRemaining === "number") {
-            lastCredits = meta.creditsRemaining;
-          }
-          if (typeof meta?.trialCreditsRemaining === "number") {
-            lastTrial = meta.trialCreditsRemaining;
-          }
-          if (meta?.model) lastModel = meta.model;
-          if (meta?.guestLimits) lastGuestLimits = meta.guestLimits;
-          resolve();
-        },
-        onError: reject,
-      },
-      opts.guestLimits,
-    ).catch(reject);
-  });
+        opts.guestLimits,
+      ).catch(reject);
+    });
+  } catch (err) {
+    const fallback = content.trim() || thinking.trim();
+    if (fallback) {
+      if (!content.trim()) opts.onChunk(fallback);
+      return {
+        content: fallback,
+        thinking,
+        webSearchResult,
+        creditsRemaining: lastCredits,
+        trialCreditsRemaining: lastTrial,
+        guestLimits: lastGuestLimits,
+        model: lastModel,
+      };
+    }
+    throw err;
+  }
+
+  const finalProse = content.trim() || thinking.trim();
+  if (!finalProse) {
+    throw new Error(EMPTY_REPLY);
+  }
+  if (!content.trim()) opts.onChunk(finalProse);
 
   return {
-    content,
+    content: finalProse,
     thinking,
     webSearchResult,
     creditsRemaining: lastCredits,

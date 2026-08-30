@@ -94,6 +94,27 @@ function extractStreamReasoning(value: Record<string, unknown>): string | null {
   return typeof r === "string" && r ? r : null;
 }
 
+/** OpenRouter may emit HTTP 200 SSE with an embedded provider error. */
+function extractStreamError(value: Record<string, unknown>): string | null {
+  const err = value.error;
+  if (!err) return null;
+  if (typeof err === "string" && err.trim()) return err.trim();
+  if (typeof err === "object" && err) {
+    const rec = err as {
+      message?: string;
+      code?: string | number;
+      metadata?: { error_type?: string };
+    };
+    const parts = [
+      rec.code != null ? String(rec.code) : null,
+      rec.metadata?.error_type ?? null,
+      rec.message ?? null,
+    ].filter(Boolean);
+    return parts.join(": ") || "Upstream stream error";
+  }
+  return "Upstream stream error";
+}
+
 function parseMetaFromHeaders(
   headers: Headers,
   guestLimits: GuestLimits | null,
@@ -199,7 +220,7 @@ export async function streamCloudChat(
 
         const line = buffer.slice(0, pos).replace(/\r$/, "");
         buffer = buffer.slice(pos + 1);
-        if (!line.trim()) continue;
+        if (!line.trim() || line.trimStart().startsWith(":")) continue;
 
         const data = line.startsWith("data:")
           ? line.slice(5).trim()
@@ -238,6 +259,12 @@ export async function streamCloudChat(
         if (thinking) callbacks.onThinking(thinking);
 
         toolAcc.ingestDelta(parsed);
+
+        const streamErr = extractStreamError(parsed);
+        if (streamErr) {
+          callbacks.onError(new Error(streamErr));
+          return;
+        }
       }
     }
 

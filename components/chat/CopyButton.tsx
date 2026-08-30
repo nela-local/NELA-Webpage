@@ -27,16 +27,25 @@ export default function CopyButton({
     }
   };
 
-  const base =
+  const pillStyle =
     variant === "onAccent"
-      ? "text-[var(--bg-primary)]/80 hover:text-[var(--bg-primary)]"
-      : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]";
+      ? {
+          background: "rgba(6, 6, 26, 0.14)",
+          color: "var(--bg-primary)",
+          border: "1px solid rgba(6, 6, 26, 0.2)",
+        }
+      : {
+          background: "var(--bg-secondary)",
+          color: "var(--text-secondary)",
+          border: "1px solid var(--border-primary)",
+        };
 
   return (
     <button
       type="button"
       onClick={handleCopy}
-      className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors ${base} ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium shadow-sm transition-colors hover:opacity-90 ${className}`}
+      style={pillStyle}
       title={copied ? "Copied" : label}
       aria-label={copied ? "Copied" : label}
     >
@@ -45,7 +54,7 @@ export default function CopyButton({
       ) : (
         <Copy className="h-3.5 w-3.5" />
       )}
-      <span className="hidden sm:inline">{copied ? "Copied" : label}</span>
+      <span>{copied ? "Copied" : label}</span>
     </button>
   );
 }
