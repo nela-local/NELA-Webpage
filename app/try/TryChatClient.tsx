@@ -7,16 +7,23 @@ import {
   Download,
   Loader2,
   MessageSquarePlus,
+  PanelLeft,
   Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import ChatComposer from "@/components/chat/ChatComposer";
 import ChatMessage from "@/components/chat/ChatMessage";
+import ChatSidebar from "@/components/chat/ChatSidebar";
 import ArtifactPanel from "@/components/chat/ArtifactPanel";
 import { friendlyErrorFromUnknown } from "@/lib/friendlyError";
 import {
   createThread,
+  deleteThread,
+  findEmptyThread,
+  loadActiveThreadId,
   loadThreads,
+  saveActiveThreadId,
+  saveThreads,
   upsertThread,
 } from "@/lib/cloud/chatStorage";
 import {
@@ -80,6 +87,7 @@ export default function TryChatClient() {
   const [toolStatus, setToolStatus] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [artifactOpen, setArtifactOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [liveArtifact, setLiveArtifact] = useState<{
     title: string;
     html: string;
@@ -101,14 +109,27 @@ export default function TryChatClient() {
 
   useEffect(() => {
     const stored = loadThreads();
-    setThreads(stored);
-    if (stored[0]) setActiveId(stored[0].id);
-    else {
+    const savedActive = loadActiveThreadId();
+    if (stored.length === 0) {
       const t = createThread();
-      setThreads([t]);
+      const next = saveThreads([t]);
+      setThreads(next);
       setActiveId(t.id);
+      saveActiveThreadId(t.id);
+      return;
     }
+    setThreads(stored);
+    const active =
+      savedActive && stored.some((t) => t.id === savedActive)
+        ? savedActive
+        : stored[0]!.id;
+    setActiveId(active);
+    saveActiveThreadId(active);
   }, []);
+
+  useEffect(() => {
+    if (activeId) saveActiveThreadId(activeId);
+  }, [activeId]);
 
   useEffect(() => {
     if (!isReady || isAuthenticated) {
@@ -171,9 +192,57 @@ export default function TryChatClient() {
   );
 
   const handleNewChat = () => {
+    if (isStreaming) return;
+    const empty = findEmptyThread(threads);
+    if (empty) {
+      setActiveId(empty.id);
+      setInput("");
+      setLiveArtifact(null);
+      setArtifactOpen(false);
+      setSidebarOpen(false);
+      return;
+    }
     const t = createThread();
     setThreads((prev) => upsertThread(prev, t));
     setActiveId(t.id);
+    setInput("");
+    setLiveArtifact(null);
+    setArtifactOpen(false);
+    setSidebarOpen(false);
+  };
+
+  const handleSelectThread = (id: string) => {
+    if (isStreaming || id === activeId) return;
+    setActiveId(id);
+    setInput("");
+    setLiveArtifact(null);
+    setArtifactOpen(false);
+    setSidebarOpen(false);
+  };
+
+  const handleDeleteThread = (id: string) => {
+    if (isStreaming) return;
+    const target = threads.find((t) => t.id === id);
+    if (!target) return;
+    if (
+      target.turns.length > 0 &&
+      !window.confirm(`Delete "${target.title}"? This cannot be undone.`)
+    ) {
+      return;
+    }
+
+    const next = deleteThread(threads, id);
+    if (next.length === 0) {
+      const t = createThread();
+      const seeded = saveThreads([t]);
+      setThreads(seeded);
+      setActiveId(t.id);
+    } else if (id === activeId) {
+      setThreads(next);
+      setActiveId(next[0]!.id);
+    } else {
+      setThreads(next);
+    }
     setLiveArtifact(null);
     setArtifactOpen(false);
   };
@@ -379,6 +448,16 @@ export default function TryChatClient() {
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen((o) => !o)}
+              className="inline-flex items-center justify-center rounded-full border p-2 lg:hidden"
+              style={{ borderColor: "var(--border-primary)" }}
+              title="Chat history"
+              aria-label="Chat history"
+            >
+              <PanelLeft className="h-4 w-4" />
+            </button>
             <Cloud className="h-5 w-5" style={{ color: "var(--accent)" }} />
             <div>
               <h1 className="font-space text-lg font-semibold">NELA Cloud</h1>
@@ -513,7 +592,28 @@ export default function TryChatClient() {
           </div>
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1">
+        <div className="relative flex min-h-0 flex-1">
+          {sidebarOpen ? (
+            <button
+              type="button"
+              className="absolute inset-0 z-30 bg-black/40 lg:hidden"
+              aria-label="Close chat history"
+              onClick={() => setSidebarOpen(false)}
+            />
+          ) : null}
+
+          <ChatSidebar
+            threads={threads}
+            activeId={activeId}
+            onSelect={handleSelectThread}
+            onNew={handleNewChat}
+            onDelete={handleDeleteThread}
+            onClose={() => setSidebarOpen(false)}
+            className={`absolute inset-y-0 left-0 z-40 lg:relative lg:translate-x-0 ${
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } transition-transform duration-200 ease-out`}
+          />
+
           <div className="flex min-w-0 flex-1 flex-col">
             <div
               ref={scrollRef}
