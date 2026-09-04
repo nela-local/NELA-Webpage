@@ -68,6 +68,9 @@ export interface EntitlementResponse {
     balance: number;
     packCredits: number;
     monthlyGrant: number;
+    trialCredits?: number;
+    trialExpiresAt?: string | null;
+    packExpiresAt?: string | null;
   };
   quota: {
     includedUsd: number;

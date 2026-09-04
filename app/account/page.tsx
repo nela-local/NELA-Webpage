@@ -75,7 +75,7 @@ export default function AccountPage() {
   const balance = entitlement?.credits?.balance ?? 0;
   const packCredits = entitlement?.credits?.packCredits ?? 0;
   const showMonthlyQuota = monthlyGrant > 0;
-  // Subscription grant burns first; packs roll over separately.
+  // Subscription grant burns first; pack credits expire at calendar month end.
   const subscriptionRemaining = Math.max(0, balance - packCredits);
   const usedCredits = showMonthlyQuota
     ? Math.min(monthlyGrant, Math.max(0, monthlyGrant - subscriptionRemaining))

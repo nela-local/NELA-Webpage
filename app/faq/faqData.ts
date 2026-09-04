@@ -68,7 +68,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
         id: 'monthly-vs-packs',
         question: 'What is the difference between monthly grants and top-up packs?',
         answer:
-          'Starter and Pro subscriptions grant credits each billing period (subscription portion does not roll over). Credit packs (Nano, Plus, Max) top up the same wallet and do roll over. Both spend from one combined balance.',
+          'Starter and Pro subscriptions grant credits each billing period (subscription portion does not roll over). Credit packs (Nano, Plus, Max) top up the same wallet for the calendar month of purchase only — unused pack credits expire at month end and do not roll over. Both spend from one combined balance.',
       },
       {
         id: 'fast-free',
@@ -176,7 +176,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
         id: 'packs-any-plan',
         question: 'Can I buy credit packs without a subscription?',
         answer:
-          'Yes. Packs work on Free Cloud as well as on Starter / Pro. They unlock Cloud Smart and Deep while balance lasts and roll over across months.',
+          'Yes. Packs work on Free Cloud as well as on Starter / Pro. They unlock Cloud Smart and Deep while balance lasts. Unused pack credits expire at the end of the calendar month you buy them and do not roll over.',
       },
       {
         id: 'team',

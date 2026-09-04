@@ -515,9 +515,21 @@ export default function PricingPageContent() {
           <h2 className="font-space text-2xl font-bold mb-2">
             Credit top-up packs
           </h2>
-          <p className="mb-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            Available on any plan — packs roll over and unlock Cloud Smart / Deep
-            while balance lasts. Same wallet as subscription grants.
+          <p className="mb-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Available on any plan — unlocks Cloud Smart / Deep while balance lasts.
+            Same wallet as subscription grants.
+          </p>
+          <p
+            className="mb-6 rounded-xl border px-3 py-2 text-sm"
+            style={{
+              borderColor: 'var(--border-primary)',
+              background: 'var(--bg-card)',
+              color: 'var(--text-secondary)',
+            }}
+          >
+            Top-up credits apply only for the calendar month you buy them.
+            Unused pack credits expire at the end of that month and do not roll
+            over. Subscription monthly grants still reset each billing period.
           </p>
           <div className="grid md:grid-cols-3 gap-6">
             {packs.map((pack) => (

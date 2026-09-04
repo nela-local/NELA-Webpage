@@ -555,7 +555,9 @@ export default function BillingClient() {
             </p>
             <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
               credits available
-              {usage.packCredits > 0 ? ` · ${usage.packCredits} from packs` : ''}
+              {usage.packCredits > 0
+                ? ` · ${usage.packCredits} from packs (expire end of month)`
+                : ''}
             </p>
           </div>
 
@@ -632,7 +634,7 @@ export default function BillingClient() {
                 <p className="mt-1 text-xs" style={{ color: 'var(--text-tertiary)' }}>
                   {usage.subscriptionRemaining} subscription credits left
                   {usage.packCredits > 0
-                    ? ` · ${usage.packCredits} pack credits roll over`
+                    ? ` · ${usage.packCredits} pack credits (expire end of month)`
                     : ''}
                 </p>
               </>
@@ -896,8 +898,20 @@ export default function BillingClient() {
         {packs.length > 0 ? (
           <section className="mb-4">
             <h2 className="mb-2 font-space text-xl font-bold">Credit top-up packs</h2>
-            <p className="mb-4 text-sm" style={{ color: 'var(--text-secondary)' }}>
-              Available on any plan — packs roll over and share the same wallet.
+            <p className="mb-3 text-sm" style={{ color: 'var(--text-secondary)' }}>
+              Available on any plan — share the same wallet and unlock Cloud Smart / Deep
+              while balance lasts.
+            </p>
+            <p
+              className="mb-4 rounded-xl border px-3 py-2 text-sm"
+              style={{
+                borderColor: 'var(--border-primary)',
+                background: 'var(--bg-card)',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              Top-up credits apply only for the calendar month you buy them.
+              Unused pack credits expire at month end and do not roll over.
             </p>
             <div className="grid gap-4 sm:grid-cols-3">
               {packs.map((pack) => (
