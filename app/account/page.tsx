@@ -63,10 +63,10 @@ export default function AccountPage() {
     plan: profile?.plan ?? entitlement?.plan,
     displayPlan: entitlement?.displayPlan ?? profile?.displayPlan,
     isPremium: entitlement?.isPremium ?? profile?.isPremium,
-    paidCloud: entitlement?.paidCloud,
     entitlementStatus: profile?.entitlementStatus,
     status: entitlement?.status,
   });
+  const hasCredits = (entitlement?.credits?.balance ?? 0) > 0;
   const planTitle = isPremium ? 'Premium' : 'Free';
 
   const monthlyGrant = entitlement?.credits?.monthlyGrant ?? 0;
@@ -152,8 +152,10 @@ export default function AccountPage() {
                 <p className="font-semibold">{planTitle}</p>
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {isPremium
-                    ? 'Smart and Deep are unlocked in Cloud.'
-                    : 'Local & Cloud included. Upgrade for Smart and Deep on Cloud.'}
+                    ? 'Smart and Deep are unlocked in Cloud with your subscription credits.'
+                    : hasCredits
+                      ? 'Smart and Deep unlock while your credit balance lasts. Upgrade for a monthly Premium grant.'
+                      : 'Local & Cloud included. Upgrade for Smart and Deep on Cloud.'}
                 </p>
               </div>
             </div>

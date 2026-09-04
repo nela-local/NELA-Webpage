@@ -111,24 +111,30 @@ export default function PricingPageContent() {
           },
         );
         if (cancelled) return;
-        if (
-          confirmed.isPremium ||
-          confirmed.paidCloud ||
-          confirmed.displayPlan === 'premium'
-        ) {
+        if (confirmed.isPremium || confirmed.displayPlan === 'premium') {
           setSuccess(true);
           setMessage(
-            confirmed.isPremium
-              ? "You're on Premium — Smart and Deep are unlocked in Cloud."
-              : 'Credits added — Smart and Deep are unlocked while your balance lasts.',
+            "You're on Premium — Smart and Deep are unlocked in Cloud.",
+          );
+          return;
+        }
+        if (confirmed.paidCloud || confirmed.activated) {
+          setSuccess(true);
+          setMessage(
+            'Credits added — Smart and Deep unlock while your balance lasts. Your plan stays Free until you subscribe.',
           );
           return;
         }
         const ent = await apiFetch<EntitlementResponse>('/v1/me/entitlement');
         if (cancelled) return;
-        if (ent.isPremium || ent.paidCloud || ent.displayPlan === 'premium') {
+        if (ent.isPremium || ent.displayPlan === 'premium') {
           setSuccess(true);
-          setMessage("You're unlocked for Smart and Deep in Cloud.");
+          setMessage("You're on Premium — Smart and Deep are unlocked in Cloud.");
+        } else if (ent.paidCloud) {
+          setSuccess(true);
+          setMessage(
+            'Credits are active — Smart and Deep unlock while your balance lasts.',
+          );
         } else {
           setMessage(
             'Payment received but not active yet. Open Billing and tap Confirm.',

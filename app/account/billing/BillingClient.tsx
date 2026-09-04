@@ -363,12 +363,21 @@ export default function BillingClient() {
           body: JSON.stringify(body),
         },
       );
-      if (res.isPremium || res.paidCloud || res.displayPlan === 'premium') {
+      if (res.isPremium || res.displayPlan === 'premium') {
         setSuccess(true);
         setMessage(
-          res.isPremium
-            ? "You're on Premium — Smart and Deep are unlocked in Cloud."
-            : 'Credits added — Smart and Deep unlocked while balance lasts.',
+          "You're on Premium — Smart and Deep are unlocked in Cloud.",
+        );
+        try {
+          await refreshEntitlement();
+          await Promise.all([refreshSubscription(), refreshTransactions()]);
+        } catch {
+          /* ignore refresh failure */
+        }
+      } else if (res.paidCloud || res.activated) {
+        setSuccess(true);
+        setMessage(
+          'Credits added — Smart and Deep unlock while your balance lasts. Your plan stays Free until you subscribe.',
         );
         try {
           await refreshEntitlement();
