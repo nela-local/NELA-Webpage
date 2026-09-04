@@ -59,11 +59,13 @@ export default function AccountPage() {
     }
   }, [user]);
 
+  // Prefer live entitlement over profile/localStorage — profile can stay stale
+  // Premium after a wallet clawback until the next full session refresh.
   const isPremium = isPremiumAccount({
-    plan: profile?.plan ?? entitlement?.plan,
+    plan: entitlement?.plan ?? profile?.plan,
     displayPlan: entitlement?.displayPlan ?? profile?.displayPlan,
     isPremium: entitlement?.isPremium ?? profile?.isPremium,
-    entitlementStatus: profile?.entitlementStatus,
+    entitlementStatus: entitlement?.status ?? profile?.entitlementStatus,
     status: entitlement?.status,
   });
   const hasCredits = (entitlement?.credits?.balance ?? 0) > 0;
