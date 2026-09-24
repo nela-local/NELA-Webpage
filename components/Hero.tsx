@@ -79,7 +79,6 @@ export default function Hero() {
     <section className="relative flex min-h-screen items-center justify-center px-4 pb-32 pt-24 sm:px-6 sm:pt-28">
       <div className="z-10 mx-auto flex w-full max-w-5xl flex-col items-center text-center">
 
-        {/* Dorky Terminal Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -89,11 +88,10 @@ export default function Hero() {
         >
           <Terminal className="w-4 h-4" style={{ color: 'var(--accent)' }} />
           <span className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
-            Local-first · optional Cloud
+            Next to Tally · local-first · optional Cloud
           </span>
         </motion.div>
 
-        {/* Logo */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -110,7 +108,6 @@ export default function Hero() {
           />
         </motion.div>
 
-        {/* Main Title */}
         <motion.h1
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -121,27 +118,25 @@ export default function Hero() {
           NELA
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-xl md:text-3xl max-w-2xl mb-4 font-light"
+          className="text-xl md:text-3xl max-w-3xl mb-4 font-light"
           style={{ color: 'var(--text-secondary)' }}
         >
-          Neural Engine for Local Analysis.
+          Plain-language money answers from your live Tally books.
         </motion.p>
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-base md:text-lg max-w-xl mb-12 font-light"
+          className="text-base md:text-lg max-w-2xl mb-12 font-light"
           style={{ color: 'var(--text-tertiary)' }}
         >
-          Your private AI workspace on desktop — run models on this device, or sign in for optional NELA Cloud.
+          The private AI that sits next to TallyPrime — read-only — and tells Indian MSME owners how the business is doing. Run on your PC, or sign in for optional NELA Cloud dashboards and Excel.
         </motion.p>
 
-        {/* Download Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

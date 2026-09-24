@@ -4,6 +4,7 @@ A map of what NELA offers today. Each link opens a short, practical guide.
 
 ## Flagship
 
+- **[Tally connector](/docs/features/tally)** — read-only TallyPrime link for plain-language money answers, Cloud dashboard, and Excel.
 - **[File Indexer](/docs/features/file-indexer)** — state-of-the-art folder search (keywords + meaning + structure). Use **Search my files** in Chat.
 
 ## Everyday

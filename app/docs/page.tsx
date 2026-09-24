@@ -8,9 +8,9 @@ const quickStartLinks = [
     description: 'Download NELA, create a project, and send your first message.',
   },
   {
-    href: '/docs/features/file-indexer',
-    title: 'Index your folders',
-    description: 'Turn disk folders into a smart File Indexer the assistant can search.',
+    href: '/docs/features/tally',
+    title: 'Connect TallyPrime',
+    description: 'Read-only books → plain-language cash, overdue, and sales answers.',
   },
   {
     href: '/docs/features/private-vs-cloud',
@@ -26,12 +26,18 @@ const topicSections = [
       {
         href: '/docs/what-is-it',
         title: 'Welcome',
-        description: 'What NELA is: local-first desktop AI with optional Cloud.',
+        description: 'Private AI next to Tally — local-first desktop with optional Cloud.',
       },
       {
         href: '/docs/installation',
         title: 'Get started',
         description: 'Install, first workspace, and a simple checklist.',
+      },
+      {
+        href: '/docs/features/tally',
+        title: 'Tally connector',
+        description: 'HTTP Server, read-only tools, Cloud dashboard and Excel.',
+        featured: true,
       },
       {
         href: '/docs/features/private-vs-cloud',
@@ -48,7 +54,6 @@ const topicSections = [
         title: 'File Indexer',
         description:
           'State-of-the-art folder search: keywords + meaning, structured for better answers.',
-        featured: true,
       },
       {
         href: '/docs/features/local-indexing',
@@ -101,8 +106,8 @@ export default function DocsPage() {
         <p className={styles.docsHeroBadge}>NELA Documentation</p>
         <h1 className={styles.docsHeroHeading}>Docs</h1>
         <p className={styles.docsHeroBody}>
-          Practical guides for a local-first desktop AI workspace — with optional NELA Cloud.
-          Start with install, then unlock the File Indexer and your document library.
+          Private AI next to Tally — local-first on your PC, with optional NELA Cloud for stronger
+          answers, live dashboards, and Excel. Start with install, then connect TallyPrime.
         </p>
 
         <div className={styles.docsHeroQuickGrid}>

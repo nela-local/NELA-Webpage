@@ -8,7 +8,9 @@ export default function PrivacyPage() {
         <p style={{ color: 'var(--text-secondary)' }}>
           NELA is local-first. Your desktop workspaces, local models, and file
           indexes stay on your device unless you explicitly send context to NELA
-          Cloud.
+          Cloud. The optional TallyPrime connector is read-only: NELA reads
+          ledgers and reports over the local HTTP Server and never writes
+          vouchers.
         </p>
         <h2 className="font-space text-2xl font-semibold mt-8 mb-3">
           Account data

@@ -304,11 +304,50 @@ export default function PricingPageContent() {
           Pricing
         </h1>
         <p className="mb-12 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>
-          Local &amp; Cloud is free to start — on-device modes plus Cloud Fast (
-          {fastLimit} / {fastWindow}h). Premium grants monthly credits;
-          pay-as-you-go packs top up the same wallet.
+          Free Private on your PC, plus Cloud Fast ({fastLimit} / {fastWindow}h)
+          when signed in. Starter and Pro add monthly credits for Cloud Smart /
+          Deep — including stronger Tally answers, live dashboards, and Excel.
+          Credit packs top up the same wallet.
           {prices ? ` Prices for ${prices.country} (INR checkout).` : null}
         </p>
+
+        <div
+          className="mb-14 rounded-2xl border p-6 md:p-8"
+          style={{
+            borderColor: 'var(--accent)',
+            background: 'var(--bg-card)',
+            boxShadow: '0 0 24px var(--accent-glow)',
+          }}
+        >
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="max-w-xl">
+              <p
+                className="font-mono text-xs uppercase tracking-wider mb-2"
+                style={{ color: 'var(--accent)' }}
+              >
+                Early Access
+              </p>
+              <h2 className="font-space text-2xl md:text-3xl font-bold mb-2">
+                Tally Connector
+              </h2>
+              <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+                Connect live TallyPrime books for owner Q&amp;A, dashboard, and
+                Excel. Read-only — NELA never writes vouchers. Billing opens soon;
+                the connector is available in the desktop app today.
+              </p>
+              <p className="font-medium" style={{ color: 'var(--accent)' }}>
+                ₹299 / mo · or ₹2,999 / yr
+              </p>
+            </div>
+            <Link
+              href="/download"
+              className="inline-flex shrink-0 self-start md:self-center rounded-full px-5 py-3 text-sm font-semibold"
+              style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }}
+            >
+              Download · try Early Access
+            </Link>
+          </div>
+        </div>
 
         {message ? (
           <p
@@ -332,8 +371,9 @@ export default function PricingPageContent() {
               {freeLabel}
             </p>
             <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
-              Local &amp; Cloud: private on-device modes plus Cloud Fast{' '}
-              {fastLimit}/{fastWindow}h. Buy credits anytime for Smart/Deep.
+              Local &amp; Cloud: private on-device modes, read-only Tally text
+              answers, plus Cloud Fast {fastLimit}/{fastWindow}h. Buy credits
+              anytime for Smart/Deep dashboards and Excel.
             </p>
             <Link
               href="/download"

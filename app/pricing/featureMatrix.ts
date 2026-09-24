@@ -35,9 +35,10 @@ export function buildModeTiers(live: ModeTierLiveValues): ModeTier[] {
       priceLabel: '₹0',
       priceHint: 'Local forever · Cloud Fast free tier',
       blurb:
-        'Private on-device modes plus signed-in Cloud Fast for quick answers when you want the network.',
+        'Private on-device modes plus signed-in Cloud Fast — including plain-language Tally text answers when connected.',
       features: [
         'Fast, Smart, and Deep on your device — no account required',
+        'Read-only TallyPrime connect · text money answers',
         'Artifacts, web search, docs / RAG, voice, vision, Playground',
         `Cloud Fast chat (${fastQuota} on Free)`,
         'Unlimited Cloud Fast while you have credits',
@@ -52,9 +53,11 @@ export function buildModeTiers(live: ModeTierLiveValues): ModeTier[] {
       includesFrom: 'Everything in Local & Cloud, plus:',
       priceLabel: live.starterPriceLabel,
       priceHint: `Starter · ${live.starterCredits} credits / mo`,
-      blurb: 'Balanced Cloud reasoning for everyday harder questions.',
+      blurb:
+        'Balanced Cloud reasoning for everyday owner questions — stronger Tally tool use and artifacts.',
       features: [
         'Smart quality tier on Cloud',
+        'Stronger Tally Q&A, live dashboard, and Excel export',
         'Stronger tool use and freeform Cloud artifacts',
         'Also unlockable with Pro or credit packs',
       ],
@@ -67,10 +70,10 @@ export function buildModeTiers(live: ModeTierLiveValues): ModeTier[] {
       includesFrom: 'Everything in Cloud Smart, plus:',
       priceLabel: live.proPriceLabel,
       priceHint: `Pro · ${live.proCredits} credits / mo`,
-      blurb: 'Highest Cloud quality for long or complex work.',
+      blurb: 'Highest Cloud quality for long or complex business analysis.',
       features: [
         'Deep quality tier on Cloud',
-        'Best for large context and tougher tasks',
+        'Best for large context and tougher Tally / document work',
         `Bigger monthly pool than Starter (${live.starterCredits} → ${live.proCredits})`,
       ],
       ctaKind: 'pro',

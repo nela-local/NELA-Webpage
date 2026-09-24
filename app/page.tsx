@@ -3,9 +3,11 @@
 import { useScroll } from 'motion/react';
 import NeuralBackground from '@/components/NeuralBackground';
 import Hero from '@/components/Hero';
-import UseCases from '@/components/UseCases';
+import OwnerJobs from '@/components/OwnerJobs';
+import HowItWorks from '@/components/HowItWorks';
 import Features from '@/components/Features';
-import Models from '@/components/Models';
+import AlsoInWorkspace from '@/components/AlsoInWorkspace';
+import PricingStrip from '@/components/PricingStrip';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -13,15 +15,15 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-transparent overflow-hidden">
-      {/* Fixed 3D Background */}
       <NeuralBackground scrollYProgress={scrollYProgress} />
-      
-      {/* Scrollable Content */}
+
       <div className="relative z-10">
         <Hero />
-        <UseCases />
+        <OwnerJobs />
+        <HowItWorks />
         <Features />
-        <Models />
+        <AlsoInWorkspace />
+        <PricingStrip />
         <Footer />
       </div>
     </main>

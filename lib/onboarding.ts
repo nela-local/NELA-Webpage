@@ -1,6 +1,8 @@
 export const ONBOARDING_OCCUPATIONS = [
-  { id: 'student', label: 'Student' },
+  { id: 'business_owner', label: 'Business owner (MSME)' },
+  { id: 'ca_accountant', label: 'CA / Accountant' },
   { id: 'professional', label: 'Professional' },
+  { id: 'student', label: 'Student' },
   { id: 'freelancer', label: 'Freelancer' },
   { id: 'researcher', label: 'Researcher' },
   { id: 'educator', label: 'Educator' },
@@ -9,9 +11,13 @@ export const ONBOARDING_OCCUPATIONS = [
 ] as const;
 
 export const ONBOARDING_FIELDS = [
+  { id: 'trading_retail', label: 'Trading & Retail' },
+  { id: 'manufacturing', label: 'Manufacturing' },
+  { id: 'services', label: 'Services' },
+  { id: 'accounting', label: 'Accounting & Tax' },
+  { id: 'business', label: 'Business & Finance' },
   { id: 'software', label: 'Software & Engineering' },
   { id: 'design', label: 'Design & Creative' },
-  { id: 'business', label: 'Business & Finance' },
   { id: 'science', label: 'Science & Research' },
   { id: 'healthcare', label: 'Healthcare' },
   { id: 'education', label: 'Education' },

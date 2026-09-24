@@ -19,8 +19,8 @@ export default async function DownloadPage() {
           >
             Downloads
           </h1>
-          <p className="text-lg font-light max-w-md mx-auto" style={{ color: 'var(--text-tertiary)' }}>
-            Everything you need to run NELA on your machine — with optional NELA Cloud after you sign in.
+          <p className="text-lg font-light max-w-xl mx-auto" style={{ color: 'var(--text-tertiary)' }}>
+            Install NELA next to TallyPrime — ask cash, overdue, and sales in plain language. Optional NELA Cloud after you sign in for dashboards and Excel.
           </p>
         </div>
 

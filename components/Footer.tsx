@@ -20,21 +20,23 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative py-32 px-6 z-10 border-t"
+    <footer
+      className="relative py-32 px-6 z-10 border-t"
       style={{ background: 'var(--bg-overlay-heavy)', borderColor: 'var(--border-subtle)' }}
     >
       <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-        
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="font-space inline-block overflow-visible px-[0.06em] pb-[0.08em] text-5xl md:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent"
-          style={{ backgroundImage: 'linear-gradient(to bottom, var(--gradient-text-from), var(--gradient-text-to))' }}
+          style={{
+            backgroundImage: 'linear-gradient(to bottom, var(--gradient-text-from), var(--gradient-text-to))',
+          }}
         >
-          Ready for your workspace?
+          Ready for money clarity?
         </motion.h2>
-        
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -43,7 +45,7 @@ export default function Footer() {
           className="text-xl max-w-2xl mb-16 font-light"
           style={{ color: 'var(--text-secondary)' }}
         >
-          Download NELA for Private on-device AI. Sign in after install when you want optional NELA Cloud.
+          Download NELA, connect TallyPrime read-only, and ask how the business is doing — in plain language. Sign in after install when you want optional NELA Cloud.
         </motion.p>
 
         <motion.div
@@ -63,7 +65,8 @@ export default function Footer() {
               boxShadow: `0 0 40px var(--accent-glow)`,
             }}
           >
-            <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"
+            <div
+              className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"
               style={{ background: 'var(--text-primary)' }}
             />
             <span className="relative z-10 flex items-center gap-2">
@@ -73,11 +76,14 @@ export default function Footer() {
           </Link>
         </motion.div>
 
-        <div className="w-full border-t pt-12 flex flex-col md:flex-row items-center justify-between gap-6"
+        <div
+          className="w-full border-t pt-12 flex flex-col md:flex-row items-center justify-between gap-6"
           style={{ borderColor: 'var(--border-primary)' }}
         >
-          <div className="font-space text-2xl font-bold tracking-tighter" style={{ color: 'var(--text-primary)' }}>NELA</div>
-          
+          <div className="font-space text-2xl font-bold tracking-tighter" style={{ color: 'var(--text-primary)' }}>
+            NELA
+          </div>
+
           <div className="flex gap-6 items-center" style={{ color: 'var(--text-tertiary)' }}>
             <Link href="/privacy" className="text-sm hover:opacity-80 transition-opacity">
               Privacy
@@ -117,7 +123,7 @@ export default function Footer() {
               <Mail className="w-6 h-6" />
             </a>
           </div>
-          
+
           <div className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>
             © {new Date().getFullYear()} NELA Intelligence. All rights reserved.
           </div>

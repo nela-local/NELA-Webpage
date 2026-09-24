@@ -15,6 +15,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: '/docs/what-is-it', label: 'Welcome' },
       { href: '/docs/installation', label: 'Get started' },
+      { href: '/docs/features/tally', label: 'Tally connector' },
       { href: '/docs/features/private-vs-cloud', label: 'Private vs Cloud' },
     ],
   },
@@ -64,7 +65,7 @@ export default function DocsSidebar() {
         <div className={styles.docsSidebarMeta}>
           <p className={styles.docsSidebarEyebrow}>NELA Docs</p>
           <p className={styles.docsSidebarCaption}>
-            Local-first workspace, optional Cloud — practical guides
+            Private AI next to Tally — local-first, optional Cloud
           </p>
         </div>
 

@@ -14,9 +14,9 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' });
 
 export const metadata: Metadata = {
-  title: 'NELA',
+  title: 'NELA — Private AI next to Tally',
   description:
-    'Neural Engine for Local Analysis — a local-first desktop AI workspace with optional NELA Cloud.',
+    'NELA is the private AI that sits next to Tally and tells Indian MSME owners—in plain language—how their business is doing. Local-first desktop with optional NELA Cloud.',
   icons: {
     icon: [
       { url: '/logo-light.png', media: '(prefers-color-scheme: light)' },

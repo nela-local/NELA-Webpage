@@ -13,13 +13,43 @@ export type FaqSection = {
 export const FAQ_SECTIONS: FaqSection[] = [
   {
     id: 'product',
-    title: 'Product & local use',
+    title: 'Product & Tally',
     items: [
+      {
+        id: 'what-is-nela',
+        question: 'What is NELA for MSME owners?',
+        answer:
+          'NELA is the private AI that sits next to TallyPrime and tells Indian MSME owners—in plain language—how their business is doing: cash, overdue, sales, and CA-ready Excel. It is local-first on desktop, with optional NELA Cloud for stronger answers, live dashboards, and exports.',
+      },
+      {
+        id: 'replace-tally',
+        question: 'Does NELA replace Tally?',
+        answer:
+          'No. Your books stay in Tally. NELA connects read-only over TallyPrime’s HTTP Server, answers questions, and (on Cloud) can show a live dashboard or Excel summary. It never writes vouchers and is not a GST filing suite.',
+      },
+      {
+        id: 'tally-readonly',
+        question: 'Is the Tally connector read-only?',
+        answer:
+          'Yes. NELA only reads ledgers and reports (cash/bank, outstanding, sales, trial balance, daybook, and related tools). It never creates or edits vouchers in Tally.',
+      },
+      {
+        id: 'tally-private-vs-cloud',
+        question: 'Can I use Tally in Private mode without Cloud?',
+        answer:
+          'Yes for plain-language text answers from live (or exported) books. Live HTML dashboards and Excel export need NELA Cloud. Private mode keeps inference on your device after models are installed.',
+      },
+      {
+        id: 'tally-early-access',
+        question: 'What is Tally Connector Early Access pricing?',
+        answer:
+          'List price is ₹299/mo or ₹2,999/yr. Billing for the add-on is not open yet — Early Access means you can connect Tally in the desktop app today. Cloud Starter (₹399) and Pro (₹999) remain the live subscription SKUs, with credit packs available anytime.',
+      },
       {
         id: 'fully-local',
         question: 'Is NELA fully local?',
         answer:
-          'Core workflows are local-first. Inference, indexing, and retrieval are designed to run on-device. Internet is mainly needed for model downloads and optional Cloud or web-search flows.',
+          'Core workflows are local-first. Inference, indexing, and retrieval are designed to run on-device. Internet is mainly needed for model downloads, optional Cloud, web search, and Google OAuth connectors.',
       },
       {
         id: 'model-categories',
@@ -30,9 +60,9 @@ export const FAQ_SECTIONS: FaqSection[] = [
       {
         id: 'modes',
         question:
-          'What is the difference between Chat, Vision, Audio, Podcast, and Mindmap?',
+          'What else can NELA do besides Tally?',
         answer:
-          'Each mode is a different task path: Chat for general text and RAG, Vision for image-grounded prompts, Audio for speech workflows, Podcast for scripted two-speaker generation, and Mindmap for concept-tree outputs.',
+          'The same desktop workspace includes document RAG, File Indexer, Cloud artifacts (PPT/Excel/HTML), vision, audio, podcasts, mindmaps, and approved connectors (Gmail, Drive, Telegram). Those are secondary to the MSME money-clarity wedge.',
       },
       {
         id: 'rag-weak',
@@ -110,7 +140,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
         id: 'private-vs-cloud',
         question: 'When should I use Private vs Cloud?',
         answer:
-          'Private keeps inference on-device — best for privacy and offline work. Cloud is for when you want hosted Fast / Smart / Deep quality without loading large local models. Auto prefers Cloud when available and can fall back locally.',
+          'Private keeps inference on-device — best for privacy and offline work after models are installed. Cloud is for hosted Fast / Smart / Deep, live Tally dashboards, Excel export, and richer artifacts. Auto prefers Cloud when available and can fall back locally.',
       },
       {
         id: 'tools-web',
@@ -158,7 +188,7 @@ export const FAQ_SECTIONS: FaqSection[] = [
         id: 'how-pay',
         question: 'How do payments work?',
         answer:
-          'Checkout is in INR via Razorpay. You can buy Starter or Pro subscriptions, or one-time credit packs. After paying, return to Billing and use Confirm if the plan or credits are not active yet.',
+          'Checkout is in INR via Razorpay. You can buy Starter or Pro subscriptions, or one-time credit packs. Tally Connector Early Access is listed on Pricing but not billed yet — download the app to connect today. After paying Cloud SKUs, return to Billing and use Confirm if the plan or credits are not active yet.',
       },
       {
         id: 'already-subscribed',

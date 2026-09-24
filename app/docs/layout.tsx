@@ -6,9 +6,9 @@ import styles from '../../components/DocsStyles.module.css';
 const mobileQuickLinks = [
   { href: '/docs/what-is-it', label: 'Welcome' },
   { href: '/docs/installation', label: 'Get started' },
-  { href: '/docs/features/file-indexer', label: 'File Indexer' },
+  { href: '/docs/features/tally', label: 'Tally' },
   { href: '/docs/features/private-vs-cloud', label: 'Private / Cloud' },
-  { href: '/docs/features/artifacts', label: 'Create files' },
+  { href: '/docs/features/file-indexer', label: 'File Indexer' },
   { href: '/docs/trouble-shooting', label: 'Fix problems' },
 ];
 

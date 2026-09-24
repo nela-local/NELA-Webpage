@@ -463,8 +463,8 @@ export default function TryChatClient() {
               <h1 className="font-space text-lg font-semibold">NELA Cloud</h1>
               <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                 {isGuest
-                  ? "Try chat and web search in your browser"
-                  : "Try chat, web search, and HTML artifacts in your browser"}
+                  ? "Browser try — desktop app connects Tally"
+                  : "Browser try — chat, search, HTML artifacts"}
               </p>
             </div>
           </div>
@@ -636,18 +636,22 @@ export default function TryChatClient() {
                       {isGuest ? (
                         <>
                           <li>
+                            Ask what NELA is — private AI next to Tally for MSME money clarity
+                          </li>
+                          <li>
                             Guest try: {guestLimits?.chat.limit ?? 10} Fast messages
                             and {guestLimits?.search.limit ?? 10} web searches per 24h
                           </li>
                           <li>Ask for live facts — NELA can search the web for you</li>
                           <li>
-                            Sign in for HTML artifacts, Smart/Deep modes, and higher
-                            limits
+                            Download the desktop app to connect TallyPrime read-only
                           </li>
                         </>
                       ) : (
                         <>
-                          <li>Ask a question — Fast mode uses your free Cloud quota</li>
+                          <li>
+                            Ask about cash, overdue, or sales — then download desktop for live Tally
+                          </li>
                           <li>Request live facts — NELA can search the web for you</li>
                           <li>
                             Ask for a short HTML report or slide deck — preview appears
