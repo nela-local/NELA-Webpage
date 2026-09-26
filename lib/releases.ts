@@ -36,12 +36,12 @@ export interface ReleasesData {
 
 let _cache: ReleasesData | null = null;
 let _cacheTs = 0;
-const CLIENT_CACHE_TTL = 5 * 60 * 1000; // 5 min
+const CLIENT_CACHE_TTL = 60 * 1000; // 1 min — keep in sync with API s-maxage
 
 export async function fetchReleases(): Promise<ReleasesData> {
   if (_cache && Date.now() - _cacheTs < CLIENT_CACHE_TTL) return _cache;
 
-  const res = await fetch("/api/releases");
+  const res = await fetch("/api/releases", { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to fetch releases: ${res.statusText}`);
 
   const data: ReleasesData = await res.json();
